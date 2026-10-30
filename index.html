@@ -134,7 +134,22 @@ var DOCS={"reset": "<!doctype html><html><head><meta charset=utf8><meta name=vie
       if(d&&d.documentElement){if(th)d.documentElement.setAttribute('data-theme',th);else d.documentElement.removeAttribute('data-theme');}
     }catch(e){}
   }
-  frame.addEventListener('load',syncTheme);
+  /* Dentro de la serie, un enlace #ruta se resolvería contra la dirección de la biblioteca y la cargaría dentro del marco: se intercepta y se cambia solo el hash de la serie. */
+  function guard(){
+    try{
+      var d=frame.contentDocument,w=frame.contentWindow;
+      if(!d||d.__guard)return;
+      d.__guard=true;
+      d.addEventListener('click',function(e){
+        var a=e.target&&e.target.closest?e.target.closest('a[href^="#"]'):null;
+        if(!a||e.defaultPrevented||e.button>0||e.metaKey||e.ctrlKey||e.shiftKey)return;
+        e.preventDefault();
+        var h=a.getAttribute('href');
+        if(w.location.hash===h){w.dispatchEvent(new Event('hashchange'));}else{w.location.hash=h;}
+      },true);
+    }catch(x){}
+  }
+  frame.addEventListener('load',function(){guard();syncTheme();});
   try{new MutationObserver(syncTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});}catch(e){}
   function route(){
     var h=(location.hash||'').replace('#','');
