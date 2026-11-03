@@ -1346,6 +1346,7 @@ header.top{background:var(--bg)}
 </script>
 
 
+
 <style id="pasos-css">
 .pasos,.pasos-nav{display:none}
 html.con-pasos .pasos{display:block;margin-top:14px}
@@ -1406,7 +1407,7 @@ html.con-pasos .pasos-fuera{display:none!important}
     c.appendChild(cb);
     var anchor0=navp||main.querySelector(':scope > .pie');
     main.insertBefore(c,anchor0);
-    groups.push([c]);labels.push('Terminada');
+    groups.push([c]);labels.push('');
     var tail=[main.querySelector(':scope > .pie'),v.querySelector(':scope > .valores')].filter(Boolean);
     var box=document.createElement('div');box.className='pasos';box.setAttribute('role','group');box.setAttribute('aria-label','Pasos de la píldora');
     var dots='';for(var k=0;k<R;k++)dots+='<i></i>';
