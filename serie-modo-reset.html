@@ -1239,6 +1239,7 @@ header.top{background:var(--bg)}
 })();
 </script>
 
+
 <style id="pasos-css">
 .pasos,.pasos-nav{display:none}
 html.con-pasos .pasos{display:block;margin-top:14px}
@@ -1252,6 +1253,17 @@ html.con-pasos .pasos-nav{display:flex;gap:10px;position:sticky;bottom:0;z-index
 .pasos-nav .btn{flex:1;justify-content:center;min-height:48px}
 .pasos-nav .btn.next{background:var(--red);border-color:var(--red);color:#fff}
 .pasos-nav .btn[hidden]{display:none!important}
+.cierre{display:none}
+html.con-pasos .cierre{display:block;margin-top:22px;border:2px solid var(--red);border-radius:var(--r,8px);padding:22px 18px;background:var(--surface);text-align:center}
+.cierre:focus{outline:none}
+.cierre .ci{width:60px;height:60px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.cierre h2{margin:0;font-family:var(--f-display);font-weight:800;font-size:32px;line-height:1;letter-spacing:.5px;text-transform:uppercase}
+.cierre .cl{margin:14px 0 0;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--red-text)}
+.cierre .ca{margin:6px 0 0;padding:12px 14px;background:var(--soft,#eee);border-radius:var(--r,8px);font-weight:700;font-size:17px;line-height:1.4;text-align:left}
+.cierre .cr{margin:12px 0 0;font-size:15px;font-weight:600;color:var(--muted)}
+.cierre .cb{display:grid;gap:10px;margin-top:18px}
+.cierre .btn{min-height:48px;justify-content:center;text-decoration:none}
+.cierre .btn.next{background:var(--red);border-color:var(--red);color:#fff}
 html.con-pasos .pasos-fuera{display:none!important}
 </style>
 <script id="pasos-js">
@@ -1269,39 +1281,59 @@ html.con-pasos .pasos-fuera{display:none!important}
     groups.push([g,secs[0]].filter(Boolean));labels.push('La idea clave');
     for(var i=1;i<secs.length;i++){groups.push([secs[i]]);var h2=secs[i].querySelector('h2');labels.push(h2?h2.textContent.replace(/\s*·.*$/,''):'Parte '+(i+1));}
     groups.push([colB]);labels.push('Esta semana');
-    var tail=[main.querySelector(':scope > .navp'),main.querySelector(':scope > .pie'),v.querySelector(':scope > .valores')].filter(Boolean);
+    var R=groups.length;
+    var navp=main.querySelector(':scope > .navp'),nextA=navp&&navp.querySelector('a.next'),accP=colB.querySelector('.accion p');
+    var num=(v.id.match(/\d+/)||[''])[0],esUlt=!!(nextA&&/#mi-kit/.test(nextA.getAttribute('href')||''));
+    var c=document.createElement('section');c.className='cierre';c.setAttribute('tabindex','-1');
+    var ci=document.createElement('div');ci.className='ci';ci.innerHTML='<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var h=document.createElement('h2');h.textContent=esUlt?'Has terminado la serie':'Píldora '+num+' terminada';
+    c.appendChild(ci);c.appendChild(h);
+    if(accP){
+      var l=document.createElement('p');l.className='cl';l.textContent='Tu acción de esta semana';
+      var q=document.createElement('p');q.className='ca';q.textContent=accP.textContent;
+      var r=document.createElement('p');r.className='cr';r.textContent='Dentro de una semana, revisa cómo te ha ido.';
+      c.appendChild(l);c.appendChild(q);c.appendChild(r);
+    }
+    var cb=document.createElement('div');cb.className='cb';
+    if(nextA){var a1=document.createElement('a');a1.className='btn next';a1.href=nextA.getAttribute('href');a1.textContent=esUlt?'Abrir mi plan':'Siguiente píldora';cb.appendChild(a1);}
+    var a2=document.createElement('a');a2.className='btn';a2.href='#inicio';a2.textContent='Todas las píldoras';cb.appendChild(a2);
+    c.appendChild(cb);
+    var anchor0=navp||main.querySelector(':scope > .pie');
+    main.insertBefore(c,anchor0);
+    groups.push([c]);labels.push('Terminada');
+    var tail=[main.querySelector(':scope > .pie'),v.querySelector(':scope > .valores')].filter(Boolean);
     var box=document.createElement('div');box.className='pasos';box.setAttribute('role','group');box.setAttribute('aria-label','Pasos de la píldora');
-    var dots='';for(var k=0;k<groups.length;k++)dots+='<i></i>';
+    var dots='';for(var k=0;k<R;k++)dots+='<i></i>';
     box.innerHTML='<div class="pasos-t"><b></b><span></span></div><div class="pasos-d" aria-hidden="true">'+dots+'</div>';
     h1.parentNode.insertBefore(box,h1.nextSibling);
     var nav=document.createElement('div');nav.className='pasos-nav';
     nav.innerHTML='<button type="button" class="btn" data-d="-1">Atrás</button><button type="button" class="btn next" data-d="1">Siguiente</button>';
-    var anchor=main.querySelector(':scope > .navp')||main.querySelector(':scope > .pie');
+    var anchor=navp||main.querySelector(':scope > .pie');
     main.insertBefore(nav,anchor);
     nav.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;go(v,(cur[v.id]||0)+(+b.getAttribute('data-d')));});
-    v.__p={groups:groups,labels:labels,tail:tail,box:box,nav:nav};
+    v.__p={groups:groups,labels:labels,tail:tail,box:box,nav:nav,R:R,navp:navp};
     return v.__p;
   }
   function go(v,n){
     var p=build(v);if(!p)return;
     n=Math.max(0,Math.min(p.groups.length-1,n));cur[v.id]=n;
-    var on=root.classList.contains('con-pasos'),last=n===p.groups.length-1;
+    var on=root.classList.contains('con-pasos'),fin=n===p.groups.length-1;
     p.groups.forEach(function(gr,i){gr.forEach(function(el){el.classList.toggle('pasos-fuera',on&&i!==n);});});
-    p.tail.forEach(function(el){el.classList.toggle('pasos-fuera',on&&!last);});
-    p.box.querySelector('b').textContent='Parte '+(n+1)+' de '+p.groups.length;
+    p.tail.forEach(function(el){el.classList.toggle('pasos-fuera',on&&!fin);});
+    if(p.navp)p.navp.classList.toggle('pasos-fuera',on);
+    p.box.querySelector('b').textContent=fin?'Terminada':'Parte '+(n+1)+' de '+p.R;
     p.box.querySelector('span').textContent=p.labels[n];
     Array.prototype.forEach.call(p.box.querySelectorAll('.pasos-d i'),function(d,i){d.classList.toggle('on',i<=n);});
-    p.nav.querySelector('[data-d="-1"]').hidden=(n===0);
-    p.nav.querySelector('[data-d="1"]').hidden=last;
-    if(on&&last)p.nav.querySelector('[data-d="1"]').hidden=true;
-    if(on)window.scrollTo(0,0);
+    var bk=p.nav.querySelector('[data-d="-1"]'),nx=p.nav.querySelector('[data-d="1"]');
+    bk.hidden=(n===0);nx.hidden=fin;nx.textContent=(n===p.R-1)?'Terminar':'Siguiente';
+    if(on){window.scrollTo(0,0);if(fin){try{p.groups[n][0].focus({preventScroll:true});}catch(e){}}}
   }
   function apply(){
     root.classList.toggle('con-pasos',mq.matches);
     views().forEach(function(v){
       if(v.hidden){return;}
       var p=build(v);if(!p)return;
-      if(!mq.matches){p.groups.forEach(function(gr){gr.forEach(function(el){el.classList.remove('pasos-fuera');});});p.tail.forEach(function(el){el.classList.remove('pasos-fuera');});}
+      if(!mq.matches){p.groups.forEach(function(gr){gr.forEach(function(el){el.classList.remove('pasos-fuera');});});p.tail.forEach(function(el){el.classList.remove('pasos-fuera');});if(p.navp)p.navp.classList.remove('pasos-fuera');}
       else go(v,cur[v.id]||0);
     });
   }
