@@ -18,3 +18,6 @@ Cada serie es un módulo de datos (`data_*.py`) con la serie (`SERIE`) y sus pí
 - `data_*.py`: contenido de cada serie.
 
 La serie del Eneagrama se retiró de la biblioteca y sus datos no se incluyen.
+
+## Series de conocimiento de una ONG (Aldeas, Cruz Roja)
+Usan `build_k.py` y `make_k.py` (mismos argumentos que `make_gen.py`). Ejemplo: `python3 -I make_k.py cruzroja data_cruzroja.py "Conoce" "Cruz Roja Española" "Captadores" ../serie-cruzroja.html`. La serie de Aldeas se generó con una versión anterior del constructor.
