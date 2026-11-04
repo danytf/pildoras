@@ -83,7 +83,7 @@ section{margin-top:38px}
 .qb[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
 .qnota{margin:8px 0 0;min-height:1.2em;font-size:15px;font-weight:600;color:var(--muted)}
 .cards .ctr{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.ctr .ct{min-width:0}.ctr .ct.long{font-size:clamp(20px,5.2vw,28px)}.card .ico{flex:none;width:36px;height:36px;border-radius:var(--r);background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center}
-.card.menos{opacity:.6;order:2}.cards .card.mas{order:1}.cards .card.mas{border-color:var(--red)}
+.card[hidden]{display:none}.ctags{display:block;font-size:13.5px;font-weight:700;color:var(--muted);line-height:1.35;margin-top:6px}.card.menos{opacity:.6;order:2}.cards .card.mas{order:1}.cards .card.mas{border-color:var(--red)}
 
 .ct{font-size:28px}
 .cbody{gap:8px}
@@ -101,99 +101,121 @@ section{margin-top:38px}
 <button type="button" class="qb" data-p="responsable" aria-pressed="false">Responsable</button>
 <button type="button" class="qb" data-p="rgr" aria-pressed="false">RGR</button></div>
 <p class="qnota" id="q-nota" role="status"></p>
+<div class="quien" role="group" aria-labelledby="t-lab"><span class="qlab" id="t-lab">Tema</span>
+<button type="button" class="qb tb" data-t="todos" aria-pressed="true">Todos</button>
+<button type="button" class="qb tb" data-t="lid" aria-pressed="false">Liderazgo</button>
+<button type="button" class="qb tb" data-t="com" aria-pressed="false">Comunicación</button>
+<button type="button" class="qb tb" data-t="sel" aria-pressed="false">Selección y formación</button>
+<button type="button" class="qb tb" data-t="ret" aria-pressed="false">Retención</button>
+<button type="button" class="qb tb" data-t="bie" aria-pressed="false">Bienestar</button>
+<button type="button" class="qb tb" data-t="cap" aria-pressed="false">Captación y ONG</button>
+</div>
+<p class="qnota" id="t-nota" role="status"></p>
 <div class="cards">
-<a class="card" href="#reset" data-para="captador" aria-label="Abrir la serie Modo RESET">
+<a class="card" href="#reset" data-tema="bie" data-para="captador" aria-label="Abrir la serie Modo RESET">
   <span class="num"><b>14</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Modo <em>RESET</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></span></span>
   <span class="para">Dirigida a: Captadores sénior</span>
+  <span class="ctags">Tema: Bienestar</span>
   <span class="cd">Una mala racha no significa que hayas dejado de saber captar: entiende qué pasa y recupera lo que te funcionó.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#senior" data-para="captador" aria-label="Abrir la serie Sénior con propósito">
+<a class="card" href="#senior" data-tema="cap" data-para="captador" aria-label="Abrir la serie Sénior con propósito">
   <span class="num"><b>13</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Sénior <em>con propósito</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/><circle cx="12" cy="12" r="10"/></svg></span></span>
   <span class="para">Dirigida a: Captadores sénior</span>
+  <span class="ctags">Tema: Captación y ONG</span>
   <span class="cd">Qué significa ser sénior, cómo aportar a tu equipo y qué hábitos revisar para aprovechar lo que has acumulado.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#estres" data-para="responsable" aria-label="Abrir la serie Estrés en mi equipo">
+<a class="card" href="#estres" data-tema="lid bie" data-para="responsable" aria-label="Abrir la serie Estrés en mi equipo">
   <span class="num"><b>14</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Estrés en <em>mi equipo</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></span></span>
   <span class="para">Dirigida a: Responsables</span>
+  <span class="ctags">Tema: Liderazgo · Bienestar</span>
   <span class="cd">Reconoce el estrés en tu equipo, aprende qué haces tú para reducirlo y ten a mano una guía para cuando alguien se desborda.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#fidelizacion" data-para="responsable" aria-label="Abrir la serie Claves de fidelización">
+<a class="card" href="#fidelizacion" data-tema="lid ret" data-para="responsable" aria-label="Abrir la serie Claves de fidelización">
   <span class="num"><b>12</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Claves de <em>fidelización</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg></span></span>
   <span class="para">Dirigida a: Responsables</span>
+  <span class="ctags">Tema: Liderazgo · Retención</span>
   <span class="cd">Qué hace que un captador se quede, según una encuesta a más de 300, y qué haces tú con cada perfil.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#escribe" data-para="rgr" aria-label="Abrir la serie Escribe para que te lean">
+<a class="card" href="#escribe" data-tema="com" data-para="rgr" aria-label="Abrir la serie Escribe para que te lean">
   <span class="num"><b>12</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Escribe para <em>que te lean</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/></svg></span></span>
   <span class="para" title="Responsable de Gestión de Recursos">Dirigida a: RGR</span>
+  <span class="ctags">Tema: Comunicación</span>
   <span class="cd">Seis hábitos para que tus correos se entiendan, se crean y consigan respuesta.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#habla" data-para="rgr" aria-label="Abrir la serie Habla para que te escuchen">
+<a class="card" href="#habla" data-tema="com" data-para="rgr" aria-label="Abrir la serie Habla para que te escuchen">
   <span class="num"><b>14</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Habla para que <em>te escuchen</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg></span></span>
   <span class="para" title="Responsable de Gestión de Recursos">Dirigida a: RGR</span>
+  <span class="ctags">Tema: Comunicación</span>
   <span class="cd">Prepara, escucha y propón para que te escuchen y te digan que sí.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#cnv" data-para="responsable" aria-label="Abrir la serie Comunicación consciente en equipos">
+<a class="card" href="#cnv" data-tema="lid com" data-para="responsable" aria-label="Abrir la serie Comunicación consciente en equipos">
   <span class="num"><b>12</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct long">Comunicación <em>consciente en equipos</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M12 5 9.04 7.96a2.17 2.17 0 0 0 0 3.08c.82.82 2.13.85 3 .07l2.07-1.9a2.82 2.82 0 0 1 3.79 0l2.96 2.66"/><path d="m18 15-2-2"/><path d="m15 18-2-2"/></svg></span></span>
   <span class="para">Dirigida a: Responsables</span>
+  <span class="ctags">Tema: Liderazgo · Comunicación</span>
   <span class="cd">Cómo hablar y escuchar a tu equipo con la Comunicación No Violenta: observar, nombrar lo que sientes y necesitas, y pedir algo concreto.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#sesgos" data-para="responsable" aria-label="Abrir la serie Sesgos inconscientes en tu equipo">
+<a class="card" href="#sesgos" data-tema="lid sel" data-para="responsable" aria-label="Abrir la serie Sesgos inconscientes en tu equipo">
   <span class="num"><b>12</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Sesgos inconscientes <em>en tu equipo</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span></span>
   <span class="para">Dirigida a: Responsables</span>
+  <span class="ctags">Tema: Liderazgo · Selección y formación</span>
   <span class="cd">Reparte cuatro turnos en un caso real y descubre qué sesgos influyen al decidir sobre las personas de tu equipo.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#primeros100" data-para="responsable" aria-label="Abrir la serie Los primeros 100 días">
+<a class="card" href="#primeros100" data-tema="ret sel" data-para="responsable" aria-label="Abrir la serie Los primeros 100 días">
   <span class="num"><b>13</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Los primeros <em>100 días</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg></span></span>
   <span class="para">Dirigida a: Responsables</span>
+  <span class="ctags">Tema: Retención · Selección y formación</span>
   <span class="cd">Cómo acompañar a una persona nueva en sus primeros 100 días, fase a fase, para dejar de perder a quien sí valía.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#seleccion" data-para="responsable" aria-label="Abrir la serie Proceso de selección de personal">
+<a class="card" href="#seleccion" data-tema="sel" data-para="responsable" aria-label="Abrir la serie Proceso de selección de personal">
   <span class="num"><b>13</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Proceso de selección <em>de personal</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></span></span>
   <span class="para">Dirigida a: Responsables Provinciales</span>
+  <span class="ctags">Tema: Selección y formación</span>
   <span class="cd">Las cuatro fases del modelo nacional de selección y qué haces tú en la entrevista presencial y en la formación inicial.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#disc" data-para="responsable" aria-label="Abrir la serie Estilos DISC en tu equipo">
+<a class="card" href="#disc" data-tema="com lid" data-para="responsable" aria-label="Abrir la serie Estilos DISC en tu equipo">
   <span class="num"><b>12</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Estilos DISC <em>en tu equipo</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span></span>
   <span class="para">Dirigida a: Responsables</span>
+  <span class="ctags">Tema: Comunicación · Liderazgo</span>
   <span class="cd">Reconoce los cuatro estilos de comportamiento DISC y adapta cómo hablas, pides y reconoces a cada persona de tu equipo.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
 </a>
-<a class="card" href="#aldeas" data-para="captador" aria-label="Abrir la serie Conoce Aldeas Infantiles SOS">
+<a class="card" href="#aldeas" data-tema="cap" data-para="captador" aria-label="Abrir la serie Conoce Aldeas Infantiles SOS">
   <span class="num"><b>12</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct long">Conoce <em>Aldeas Infantiles SOS</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span></span>
   <span class="para">Dirigida a: Captadores</span>
+  <span class="ctags">Tema: Captación y ONG</span>
   <span class="cd">Qué es Aldeas Infantiles SOS, qué programas tiene, cuánto y adónde va el dinero, y cómo explicarlo con confianza y sin inventar.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
@@ -294,6 +316,20 @@ var DOCS={"reset": "<!doctype html><html><head><meta charset=utf8><meta name=vie
   }
   Array.prototype.forEach.call(document.querySelectorAll('.qb'),function(b){b.addEventListener('click',function(){applyPerfil(b.getAttribute('data-p'),true);});});
   (function(){var p='todos';try{p=localStorage.getItem(PERFIL_KEY)||'todos';}catch(e){}applyPerfil(p,false);})();
+  var TEMA_KEY='wesser-biblioteca-tema',TEMAS={"lid": "Liderazgo", "com": "Comunicación", "sel": "Selección y formación", "ret": "Retención", "bie": "Bienestar", "cap": "Captación y ONG"};
+  function applyTema(t,save){
+    if(t!=='todos'&&!TEMAS.hasOwnProperty(t))t='todos';
+    Array.prototype.forEach.call(document.querySelectorAll('.tb'),function(b){b.setAttribute('aria-pressed',b.getAttribute('data-t')===t?'true':'false');});
+    var n=0;
+    Array.prototype.forEach.call(document.querySelectorAll('.cards .card'),function(c){
+      var ok=t==='todos'||(c.getAttribute('data-tema')||'').split(' ').indexOf(t)>-1;
+      c.hidden=!ok;if(ok)n++;
+    });
+    $('t-nota').textContent=t==='todos'?'':(n===1?'1 serie del tema ':n+' series del tema ')+TEMAS[t]+'.';
+    if(save){try{localStorage.setItem(TEMA_KEY,t);}catch(e){}}
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.tb'),function(b){b.addEventListener('click',function(){applyTema(b.getAttribute('data-t'),true);});});
+  (function(){var t='todos';try{t=localStorage.getItem(TEMA_KEY)||'todos';}catch(e){}applyTema(t,false);})();
   function route(){
     var h=(location.hash||'').replace('#','');
     if(META[h]){
