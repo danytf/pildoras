@@ -9,4 +9,4 @@ Series: Sénior con propósito, Modo RESET, Estrés en mi equipo, Claves de fide
 
 - `audio/autoempatia.mp3`: práctica guiada de autoempatía de la serie Comunicación consciente en equipos.
 
-La biblioteca permite filtrar las series por tema (Liderazgo, Comunicación, Selección y formación, Retención, Bienestar, Captación y ONG), además de por perfil. Cada serie puede tener uno o dos temas (atributo `data-tema` de su tarjeta).
+La biblioteca permite filtrar las series por tema (Liderazgo, Comunicación, Selección y formación, Fidelización, Bienestar, Captación y ONG), además de por perfil. Cada serie puede tener uno o dos temas (atributo `data-tema` de su tarjeta).

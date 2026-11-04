@@ -106,7 +106,7 @@ section{margin-top:38px}
 <button type="button" class="qb tb" data-t="lid" aria-pressed="false">Liderazgo</button>
 <button type="button" class="qb tb" data-t="com" aria-pressed="false">Comunicación</button>
 <button type="button" class="qb tb" data-t="sel" aria-pressed="false">Selección y formación</button>
-<button type="button" class="qb tb" data-t="ret" aria-pressed="false">Retención</button>
+<button type="button" class="qb tb" data-t="ret" aria-pressed="false">Fidelización</button>
 <button type="button" class="qb tb" data-t="bie" aria-pressed="false">Bienestar</button>
 <button type="button" class="qb tb" data-t="cap" aria-pressed="false">Captación y ONG</button>
 </div>
@@ -143,7 +143,7 @@ section{margin-top:38px}
   <span class="num"><b>12</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Claves de <em>fidelización</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg></span></span>
   <span class="para">Dirigida a: Responsables</span>
-  <span class="ctags">Tema: Liderazgo · Retención</span>
+  <span class="ctags">Tema: Liderazgo · Fidelización</span>
   <span class="cd">Qué hace que un captador se quede, según una encuesta a más de 300, y qué haces tú con cada perfil.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
@@ -188,7 +188,7 @@ section{margin-top:38px}
   <span class="num"><b>13</b><small>píldoras</small></span>
   <span class="cbody"><span class="ctr"><span class="ct">Los primeros <em>100 días</em></span><span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg></span></span>
   <span class="para">Dirigida a: Responsables</span>
-  <span class="ctags">Tema: Retención · Selección y formación</span>
+  <span class="ctags">Tema: Fidelización · Selección y formación</span>
   <span class="cd">Cómo acompañar a una persona nueva en sus primeros 100 días, fase a fase, para dejar de perder a quien sí valía.</span>
   <span class="pg" hidden><span class="pgt"></span><span class="pgb"><i></i></span></span>
   <span class="go"><span class="gt">Abrir la serie</span> <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
@@ -316,7 +316,7 @@ var DOCS={"reset": "<!doctype html><html><head><meta charset=utf8><meta name=vie
   }
   Array.prototype.forEach.call(document.querySelectorAll('.qb'),function(b){b.addEventListener('click',function(){applyPerfil(b.getAttribute('data-p'),true);});});
   (function(){var p='todos';try{p=localStorage.getItem(PERFIL_KEY)||'todos';}catch(e){}applyPerfil(p,false);})();
-  var TEMA_KEY='wesser-biblioteca-tema',TEMAS={"lid": "Liderazgo", "com": "Comunicación", "sel": "Selección y formación", "ret": "Retención", "bie": "Bienestar", "cap": "Captación y ONG"};
+  var TEMA_KEY='wesser-biblioteca-tema',TEMAS={"lid": "Liderazgo", "com": "Comunicación", "sel": "Selección y formación", "ret": "Fidelización", "bie": "Bienestar", "cap": "Captación y ONG"};
   function applyTema(t,save){
     if(t!=='todos'&&!TEMAS.hasOwnProperty(t))t='todos';
     Array.prototype.forEach.call(document.querySelectorAll('.tb'),function(b){b.setAttribute('aria-pressed',b.getAttribute('data-t')===t?'true':'false');});
