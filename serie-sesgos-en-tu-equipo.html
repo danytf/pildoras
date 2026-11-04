@@ -1,0 +1,1120 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sesgos inconscientes en tu equipo</title><meta name="claude:viewport-fit-sides" content="cover"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Source+Sans+3:wght@400..700&display=swap"><style>
+/* Concepto: ficha Wesser llevada al móvil. Cabecera roja con franja diagonal, una columna, bloques que se tocan (pestañas, campos) y una caja de acción roja. */
+:root{
+  --bg:#FFFFFF; --surface:#F5F2ED; --soft:#F0ECE6; --ink:#151313; --muted:#5B5551; --line:#DDD7CF; --stripe:#DDD7CF;
+  --red:#E51B1B; --red-text:#B30F14; --tint:#FDECEE; --ok:#1B7A4B; --focus:#151313;
+  --inv-bg:#F5F2ED; --inv-ink:#151313; --inv-accent:#B30F14;
+  --r:8px;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#141212; --surface:#1E1B1B; --soft:#2A2626; --ink:#F2F0F0; --muted:#B8B1AB; --line:#3A3436; --stripe:#3A3436;
+    --red-text:#FF7780; --tint:#2B1719; --ok:#2A9461; --focus:#F2F0F0;
+    --inv-bg:#1E1B1B; --inv-ink:#F2F0F0; --inv-accent:#FF7780;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141212; --surface:#1E1B1B; --soft:#2A2626; --ink:#F2F0F0; --muted:#B8B1AB; --line:#3A3436; --stripe:#3A3436;
+  --red-text:#FF7780; --tint:#2B1719; --ok:#2A9461; --focus:#F2F0F0;
+  --inv-bg:#1E1B1B; --inv-ink:#F2F0F0; --inv-accent:#FF7780;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.5;
+  padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+button,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:640px;margin:0 auto}
+svg{display:block}
+
+/* cabecera */
+.top{position:relative;margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px))) 0 calc(-1 * max(16px,env(safe-area-inset-right,0px)));
+  padding:18px max(16px,env(safe-area-inset-right,0px)) 18px max(16px,env(safe-area-inset-left,0px));overflow:hidden;background:var(--surface);border-bottom:1px solid var(--line)}
+.top::before{content:"";position:absolute;inset:0 0 0 auto;width:62%;background:var(--red);clip-path:polygon(34% 0,100% 0,100% 100%,0 100%)}
+.top::after{content:"";position:absolute;inset:0 0 0 auto;width:62%;background:var(--red);opacity:.9;clip-path:polygon(0 0,6% 0,-28% 100%,-34% 100%)}
+.top-in{position:relative;max-width:640px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:1}
+.logo{background:#fff;border-radius:var(--r);padding:6px 10px;width:132px;flex:none}
+.logo img{width:100%;height:auto}
+.tag{text-align:right;color:#fff;font-family:var(--f-display);font-weight:800;line-height:1;min-width:0}
+.tag b{display:block;font-size:30px;letter-spacing:.8px}
+.tag span{display:block;font-size:16px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;margin-top:3px}
+.tag small{display:inline-flex;align-items:center;gap:5px;font-family:var(--f-body);font-size:11px;font-weight:700;letter-spacing:.6px;margin-top:5px}
+.tag small svg{width:12px;height:12px}
+
+/* progreso */
+.prog{position:sticky;top:env(safe-area-inset-top,0px);z-index:11;background:var(--bg);margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:8px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.prog-in{max-width:640px;margin:0 auto}
+.prog-row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;font-weight:700;letter-spacing:.3px;color:var(--muted)}
+.prog-row output{color:var(--ink);font-variant-numeric:tabular-nums}
+.bar{height:6px;border-radius:3px;background:var(--soft);margin-top:5px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--red);border-radius:3px;transition:width .35s ease}
+
+/* tipografía */
+h1{font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:clamp(46px,13vw,66px);line-height:.96;margin:26px 0 0;text-wrap:balance}
+h1 em{display:block;font-style:normal;color:var(--red-text)}
+.sub{font-size:13.5px;font-weight:600;color:var(--muted);margin:10px 0 0}
+.gancho{background:var(--tint);border-left:6px solid var(--red);border-radius:0 var(--r) var(--r) 0;padding:16px 18px;font-weight:700;font-size:17.5px;line-height:1.4;margin:22px 0 0}
+.lab{display:flex;align-items:center;gap:12px;font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:24px;letter-spacing:1.2px;color:var(--red-text);margin:0}
+.lab::after{content:"";flex:1;height:2px;background:var(--line)}
+section{margin-top:34px}
+section>p.lead{margin:6px 0 0;color:var(--muted);font-size:14px;font-weight:600}
+
+/* idea clave */
+.duo{display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px}
+@media (min-width:520px){.duo{grid-template-columns:1fr 1fr}}
+.duo>div{border-radius:var(--r);padding:14px 16px;min-width:0}
+.duo h3{display:flex;align-items:center;gap:7px;font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:1px;text-transform:uppercase;margin:0 0 4px}
+.duo h3 svg{width:20px;height:20px}
+.duo p{margin:0;font-size:16px;font-weight:500;line-height:1.45}
+.no{background:var(--soft)}.no h3{color:var(--muted)}
+.si{border:2px solid var(--red);background:var(--surface)}.si h3{color:var(--red-text)}
+
+/* pestañas */
+.caso{margin:8px 0 0;font-size:14px;font-weight:600;color:var(--muted)}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.tab{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border:2px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;
+  font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:1px;text-transform:uppercase;line-height:1;min-height:44px;color:var(--ink)}
+.tab svg{width:24px;height:24px;color:var(--red-text)}
+.tab[aria-selected="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.tab[aria-selected="true"] svg{color:#fff}
+.tab .v{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.tab.seen .v{background:var(--red)}
+.tab[aria-selected="true"] .v{background:#fff}
+.panel{border:2px solid var(--red);border-radius:var(--r);margin-top:10px;overflow:hidden;background:var(--surface)}
+.panel p{margin:0;padding:16px 16px 14px;font-size:17px;font-weight:500;line-height:1.45}
+.panel .ex{background:var(--soft);padding:12px 16px 14px;font-weight:700;font-size:15.5px;line-height:1.4}
+.panel .ex b{display:block;font-family:var(--f-display);font-weight:800;text-transform:uppercase;letter-spacing:1px;font-size:14px;color:var(--red-text);margin-bottom:2px}
+
+/* mini-práctica */
+.qs{display:grid;gap:14px;margin-top:12px}
+.q{border:2px dashed var(--red);border-radius:var(--r);padding:14px 16px;background:var(--surface)}
+.q label{display:flex;gap:10px;align-items:flex-start;font-weight:800;font-size:17px;line-height:1.3}
+.q label span.n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:-1px}
+.q .h{margin:4px 0 0 36px;font-size:13px;color:var(--muted);font-weight:500}
+.q .eg{margin:4px 0 8px 36px;font-size:13.5px;color:var(--red-text);font-weight:600;font-style:italic}
+.q textarea{display:block;width:100%;min-height:76px;resize:vertical;border:1.5px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--bg);font-size:16px;line-height:1.4}
+.q textarea::placeholder{color:var(--muted);opacity:.8}
+.save{min-height:20px;margin:10px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)}
+
+/* acción */
+.accion{background:var(--red);color:#fff;border-radius:var(--r);padding:18px 18px 16px;margin-top:34px}
+.accion h2{font-family:var(--f-display);font-weight:800;font-size:26px;letter-spacing:1.4px;text-transform:uppercase;margin:0;display:flex;align-items:center;gap:10px}
+.accion h2 svg{width:26px;height:26px}
+.accion p{margin:6px 0 14px;font-weight:700;font-size:17.5px;line-height:1.4}
+.chk{display:flex;align-items:center;gap:12px;background:#fff;color:#151313;border-radius:var(--r);padding:12px 14px;font-weight:700;font-size:15.5px;cursor:pointer;min-height:48px}
+.chk input{width:22px;height:22px;accent-color:#E51B1B;flex:none;margin:0}
+.rev{background:var(--soft);border-radius:var(--r);padding:14px 18px;margin-top:12px;font-weight:500;font-size:15.5px;line-height:1.45}
+.rev b{display:block;font-family:var(--f-display);font-weight:800;text-transform:uppercase;letter-spacing:1.2px;font-size:20px;color:var(--red-text);margin-bottom:2px}
+.frase{background:var(--inv-bg);color:var(--inv-ink);border-radius:var(--r);padding:18px 20px;margin-top:12px;font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.18;letter-spacing:.3px}
+
+/* pie */
+.pie{margin-top:28px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+.reset{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:var(--r);padding:10px 14px;font-weight:700;font-size:14px;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;gap:8px}
+.btn svg{width:16px;height:16px}
+.btn.danger{border-color:var(--red);color:var(--red-text)}
+.reset span{font-size:13.5px;font-weight:600}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+
+/* casillas (píldora 2) */
+.cas{display:grid;gap:10px;margin-top:12px}
+.cas-i{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0}
+.cas-i[data-v="bien"]{border-color:var(--ok)}
+.cas-i[data-v="olv"]{border-color:var(--red)}
+.cas-h{display:flex;gap:12px;align-items:flex-start}
+.ci{flex:none;width:38px;height:38px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center}
+.ci svg{width:19px;height:19px}
+.cas-h h3{margin:0;font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:.8px;text-transform:uppercase;line-height:1.05}
+.cas-h p{margin:3px 0 0;font-size:15px;font-weight:500;line-height:1.4}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.seg button{min-height:44px;border:2px solid var(--line);border-radius:var(--r);background:var(--bg);font-weight:700;font-size:13.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 8px;line-height:1.2}
+.seg button svg{width:16px;height:16px;flex:none}
+.seg button.ok[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.seg button.ol[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.picks{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{min-height:44px;border:2px solid var(--line);border-radius:22px;background:var(--surface);padding:8px 16px;font-weight:700;font-size:14.5px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.nota{margin:12px 0 0;font-size:14px;font-weight:600;color:var(--muted)}
+.elegida{margin:12px 0 0;font-weight:800;font-size:15px;color:var(--red-text);min-height:22px}
+@media (min-width:520px){.cas{grid-template-columns:1fr 1fr}}
+
+/* índice de la serie */
+.intro{margin:22px 0 0;font-size:17px;font-weight:600;line-height:1.45}
+.idx{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:14px}
+.card-top>div{min-width:0}
+.card{display:block;text-decoration:none;color:inherit;background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:16px;min-height:44px}
+.card:hover{border-color:var(--red)}
+.card-top{display:flex;align-items:center;gap:14px}
+.num{flex:none;width:54px;height:54px;border-radius:var(--r);background:var(--red);color:#fff;font-family:var(--f-display);font-weight:800;font-size:32px;display:flex;align-items:center;justify-content:center;letter-spacing:.5px}
+.card h3{margin:0;font-family:var(--f-display);font-weight:800;font-size:27px;line-height:1.02;text-transform:uppercase;letter-spacing:.5px}
+.card small{display:block;margin-top:4px;font-size:12.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+.card .go{margin-left:auto;flex:none;color:var(--red-text)}
+.card .go svg{width:24px;height:24px}
+.card .st{display:flex;justify-content:space-between;margin-top:12px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.card .st output{color:var(--ink);font-variant-numeric:tabular-nums}
+.card .bar{margin-top:5px}
+.card p{margin:10px 0 0;font-size:15px;font-weight:500;line-height:1.4}
+.back{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:14px;font-weight:700;color:var(--red-text);text-decoration:none;min-height:44px}
+.back svg{width:16px;height:16px}
+.navp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}
+.navp .btn{text-decoration:none;justify-content:center;text-align:center}
+.navp .btn.next{background:var(--red);border-color:var(--red);color:#fff}
+h1:focus{outline:none}
+a.chip{display:inline-flex;align-items:center;text-decoration:none;color:var(--ink)}
+.ruta{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
+.ruta i{font-style:normal;color:var(--muted);font-weight:800}
+.planc{display:block;text-decoration:none;color:#fff;background:var(--red);border-radius:var(--r);padding:16px;margin-top:12px}
+.planc b{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:800;font-size:28px;letter-spacing:1.2px;text-transform:uppercase}
+.planc b svg{width:26px;height:26px}
+.planc p{margin:6px 0 10px;font-weight:600;font-size:15.5px;line-height:1.4}
+.planc output{font-weight:800;font-size:13px;font-variant-numeric:tabular-nums}
+.planc .bar{background:rgba(255,255,255,.3)}
+.planc .bar i{background:#fff}
+.pg{margin-top:26px}
+.pg h2{margin:0}
+.pr{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-top:10px;min-width:0}
+.pr small{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--red-text)}
+.pr small a{color:var(--muted);text-decoration:none;font-weight:700}
+.pr p{margin:4px 0 0;font-size:16px;font-weight:600;line-height:1.4;overflow-wrap:anywhere}
+.pr.vacio{border-style:dashed}
+.pr.vacio p{color:var(--muted);font-weight:500;font-style:italic}
+.pr.vacio p a{color:var(--red-text);font-weight:700}
+.copia{display:grid;gap:10px;margin-top:22px}
+.acts{display:flex;flex-wrap:wrap;gap:10px}.acts .btn{text-decoration:none}
+.save a{color:var(--red-text);font-weight:700}
+.copia textarea{width:100%;min-height:140px;border:1.5px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--bg);font-size:14px}
+.how{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
+.how li{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:12px 14px;font-size:15px;font-weight:500;line-height:1.4}
+.how b{display:block;font-weight:800;font-size:16px;margin-bottom:1px}
+.how .hn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;font-family:var(--f-display);font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center}
+.q .ql{display:flex;gap:10px;align-items:flex-start;font-weight:800;font-size:17px;line-height:1.3}
+.q .ql span.n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:-1px}
+.zs{display:grid;gap:10px;margin-top:12px}
+.z-i{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0}
+.z-i b{display:block;font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:.8px;text-transform:uppercase;line-height:1.05}
+.z-i span{display:block;margin-top:3px;font-size:15.5px;font-weight:500;line-height:1.4}
+.ok2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:8px}
+.ok2 button{min-width:0;line-height:1.15;min-height:44px;border:2px solid var(--line);border-radius:var(--r);background:var(--bg);font-weight:800;font-size:14px;cursor:pointer;padding:6px 8px}
+.ok2 button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tab{min-width:0;font-size:18px;padding:12px 4px;text-align:center;overflow-wrap:normal}
+.tag b{font-size:26px}
+.cs{display:grid;gap:12px;margin-top:12px}
+.cs-i{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:14px 16px;min-width:0}
+.cs-i h3{margin:0;font-weight:700;font-size:16.5px;line-height:1.4}
+.cs-i .n{font-family:var(--f-display);font-weight:800;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:var(--red-text);display:block;margin-bottom:2px}
+.opt3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.opt3 button{min-height:44px;border:2px solid var(--line);border-radius:var(--r);background:var(--bg);font-weight:800;font-size:13.5px;cursor:pointer;padding:6px 4px;line-height:1.15}
+.opt3 button[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.lect{margin:10px 0 0;font-size:14.5px;font-weight:600;line-height:1.45;min-height:0}
+.lect:empty{display:none}
+.z-i b.sent{font-family:var(--f-body);font-size:16.5px;font-weight:700;text-transform:none;letter-spacing:0;line-height:1.4}</style>
+<style id="para-puesto">.card small.para{display:inline-flex;width:fit-content;border:1.5px solid var(--red);color:var(--red-text);border-radius:999px;padding:2px 10px;font-size:13.5px;font-weight:700;letter-spacing:0;text-transform:none;line-height:1.35;margin-top:6px}</style>
+
+
+<style id="adapt-pantalla">
+/* Adaptación a pantalla: móvil (base), tablet y ordenador */
+@media (min-width:760px){
+  body{font-size:17px}
+  .wrap,.top-in,.prog-in{max-width:min(1040px,100%)}
+  .logo{width:160px}
+  .tag b{font-size:32px}
+  .tag span{font-size:18px}
+  h1{font-size:clamp(64px,8vw,88px)}
+  .sub{font-size:15px}
+  .intro{font-size:19px;max-width:72ch}
+  .gancho{font-size:20px;padding:20px 26px}
+  section>p.lead,.nota{max-width:72ch}
+  .idx{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  .how{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+  .how.tema{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .zs,.cs,.cas{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+  .qs{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));align-items:start}
+  .navp{max-width:560px;margin-left:auto;margin-right:auto}
+  #plan-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:0 28px;align-items:start}
+  .copia{max-width:720px}
+}
+@media (min-width:1100px){
+  .wrap,.top-in,.prog-in{max-width:1200px}
+  .idx{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .cols{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:44px;align-items:start}
+  .cols .accion{margin-top:34px}
+}
+@media (min-width:1100px) and (min-height:780px){
+  .col-b{position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}
+}
+</style>
+<style id="estilo-wesser">
+/* Estilo visual Wesser (skill wesser-estilo-visual) */
+header.top{background:var(--bg)}
+.logo{width:150px;padding:12px 14px;border-radius:var(--r)}
+.top::before{inset:0 -80px 0 auto;width:calc(64% + 80px);clip-path:none;transform:skewX(-14deg)}
+.top::after{inset:0 auto 0 auto;right:calc(64% + 24px);width:14px;background:var(--stripe);opacity:1;clip-path:none;transform:skewX(-14deg)}
+.frase{background:var(--surface);color:var(--ink);border:2px solid var(--red);border-radius:var(--r);font-family:var(--f-display);font-weight:800;font-size:27px;line-height:1.1;letter-spacing:.4px;text-transform:uppercase;padding:18px 20px}
+.valores{margin:34px calc(-1 * max(16px,env(safe-area-inset-right,0px))) -40px calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:18px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));background:var(--red);color:#fff;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;line-height:1.7;text-align:center;text-wrap:balance}
+.valores span{display:block}.valores b{font-weight:inherit;white-space:nowrap}
+@media (min-width:760px){.logo{width:180px}.frase{background:var(--surface);color:var(--ink);border:2px solid var(--red);border-radius:var(--r);font-family:var(--f-display);font-weight:800;font-size:27px;line-height:1.1;letter-spacing:.4px;text-transform:uppercase;padding:18px 20px}.valores{font-size:17px}}
+</style><style id="conoc">
+.datos{display:grid;gap:10px;margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.datos.d3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.datos>div{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:12px 10px;min-width:0}
+.datos>div:last-child:nth-child(odd):not(:first-child){grid-column:1/-1}
+.datos b{display:block;font-family:var(--f-display);font-weight:800;font-size:clamp(26px,8vw,36px);line-height:1.05;color:var(--red-text);overflow-wrap:anywhere}
+.datos.d3 b{text-align:center}.datos.d3 span{text-align:center}
+.datos span{display:block;margin-top:6px;font-size:13.5px;font-weight:700;line-height:1.3}
+.bars{margin-top:14px}.bars .t{height:14px;border-radius:7px;background:var(--line);display:flex;overflow:hidden}
+.bars .t i{display:block;height:100%;background:var(--red)}.bars .t i:nth-child(2){background:#7a7a7a}.bars .t i:nth-child(3){background:#bdbdbd}
+.decir{background:var(--tint);border-left:6px solid var(--red);border-radius:0 var(--r) var(--r) 0;padding:14px 16px;margin-top:12px}
+.decir small{display:block;font-family:var(--f-display);font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--red-text);font-size:15px}
+.decir p{margin:6px 0 0;font-weight:700;font-size:17px;line-height:1.4}
+.faq{margin-top:12px;display:grid;gap:10px}
+.faq>div{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0}
+.faq b{display:block;font-size:16px;line-height:1.35}
+.faq p{margin:6px 0 0;font-size:15px;line-height:1.45;font-weight:600}
+.decir.cso p{font-weight:500;font-size:16px}
+.backrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.sos-mini{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-top:18px;border:2px solid var(--red);background:var(--bg);color:var(--red-text);border-radius:var(--r);padding:6px 12px;font-weight:800;font-size:14px;cursor:pointer}
+.sos-mini svg{width:18px;height:18px}
+.sos-btn{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;margin-top:18px;border:2px solid var(--red);background:var(--tint);color:var(--ink);border-radius:var(--r);padding:10px 14px;cursor:pointer;text-align:left;font:inherit}
+.sos-btn svg{width:26px;height:26px;flex:none;color:var(--red-text)}
+.sos-btn b{display:block;font-family:var(--f-display);font-size:22px;text-transform:uppercase;color:var(--red-text)}
+.sos-btn small{display:block;font-weight:600;font-size:14px}
+.sos{position:fixed;inset:0;z-index:100;background:var(--bg);overflow:auto}
+.sos[hidden]{display:none}
+.sos-in{max-width:760px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+.sos-h{display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0;z-index:2;background:var(--bg);margin:-18px 0 0;padding:max(14px,env(safe-area-inset-top,0px)) 0 10px;border-bottom:2px solid var(--tint)}
+.sos-h h2{margin:0;font-family:var(--f-display);font-size:34px;text-transform:uppercase;color:var(--red-text)}
+.sos h3{font-family:var(--f-display);font-size:22px;text-transform:uppercase;margin:22px 0 8px}
+.sos-r{background:var(--tint);border-left:6px solid var(--red);border-radius:0 var(--r) var(--r) 0;padding:10px 14px;margin-top:8px}
+.sos-r b{display:block;font-weight:800}
+.sos-r p{margin:4px 0 0;font-size:15.5px;line-height:1.45}
+</style>
+<style>.card h3,.card small,.card .ct,.idx h3{overflow-wrap:anywhere;hyphens:auto}.card-top h3{font-size:clamp(17px,5.4vw,20px)}</style>
+<style id="ok2fix">.ok2 button{overflow-wrap:anywhere}@media(max-width:360px){.ok2[style*="repeat(3"]{grid-template-columns:minmax(0,1fr)!important}}</style>
+
+<style>.eq{display:grid;gap:10px;margin-top:12px}
+.cap{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:12px 14px;min-width:0}
+.cap h4{margin:0;font-family:var(--f-display);font-size:26px;text-transform:uppercase;letter-spacing:.8px;line-height:1.05}
+.cap dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;margin:8px 0 0}
+.cap dl>div{min-width:0}.cap dt{font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.25}
+.cap dd{margin:2px 0 0;font-weight:800;font-size:15.5px;overflow-wrap:anywhere}
+.cap .cm{margin:10px 0 0;padding:8px 12px;background:var(--tint);border-left:5px solid var(--red);border-radius:0 var(--r) var(--r) 0;font-size:15.5px;line-height:1.4;font-weight:600}
+.cap .cm small{display:block;font-family:var(--f-display);font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--red-text);font-size:13.5px;margin-bottom:2px}
+.cnt{margin-top:12px;background:var(--tint);border:2px solid var(--red);border-radius:var(--r);padding:10px 14px;font-weight:800;font-size:16px;line-height:1.4}
+.cnt[data-over="1"]{background:var(--bg)}</style>
+<header class="top"><div class="top-in"><div class="logo"><img alt="Wesser, un buen trabajo" src="data:image/png;base64,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"></div><div class="tag"><b id="tag-b">SERIE</b><span id="tag-a">Sesgos inconscientes en tu equipo</span><small><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <path d="M12 6v6l4 2" /></svg><span id="tag-s">3-4 min cada una</span></small></div></div></header>
+<div id="view-inicio" class="view"><main class="wrap">
+<span class="serie-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span>
+<h1 tabindex="-1" style="font-size:clamp(34px,11vw,64px)">Sesgos inconscientes<em>en tu equipo</em></h1><p class="sub">Cómo decidir sobre las personas de tu equipo con más datos y menos automatismos</p><p class="intro">Esta serie va dirigida a Responsables de Equipo (RE) y forma parte del Plan de Igualdad de Wesser. Cada semana tomas decenas de pequeñas decisiones sobre tu equipo: a quién acompañas, qué cuentas de cada persona al RP, cómo explicas un buen o un mal dato y a quién animas a crecer. Aquí empiezas por un caso: heredas un equipo y reparten solo cuatro turnos. Después conoces seis sesgos con ejemplos y una pregunta para comprobar cada uno. Son 12 píldoras de 3 a 4 minutos y cada una se entiende sola, aunque conviene hacer antes las píldoras 4 y 5.</p>
+<p class="nota" style="margin-top:12px;color:var(--ink)">No es una evaluación de ti ni dice que haya discriminación: todas las personas tenemos sesgos. Los casos son ficticios y no describen procesos reales de Wesser. Reconocerlos no sustituye a hablar con quien corresponda en Wesser si necesitas plantear una situación real.</p>
+<section><h2 class="lab">De qué trata</h2><ul class="how tema">
+<li><div><b>Cómo decidimos</b>Atajos del cerebro, comprobar lo evidente y qué te hace vulnerable como RE. Píldoras 1 a 3.</div></li>
+<li><div><b>Un caso: heredas un equipo</b>Reparte cuatro turnos, recibe información nueva y mira qué cambia. Píldoras 4 y 5.</div></li>
+<li><div><b>Seis sesgos</b>Metasesgo, simpatía, rendimiento, atribución, afinidad y maternidad o paternidad. Píldoras 6 a 11.</div></li>
+<li><div><b>Para terminar</b>Cómo una expectativa se cumple sola y tu ficha «¿Qué sé y qué estoy suponiendo?». Píldora 12.</div></li>
+</ul></section>
+<section><h2 class="lab">Palabras que verás</h2><ul class="how tema">
+<li><div><b>RE y RP</b>Responsable de Equipo y Responsable Provincial, a quien el RE traslada su valoración del equipo.</div></li>
+<li><div><b>Sesgo inconsciente</b>Creencia o suposición adquirida que puede actuar sin que nos demos cuenta y teñir cómo juzgamos.</div></li>
+<li><div><b>Evidencia</b>Dato o conducta concreta que otra persona también podría comprobar.</div></li>
+<li><div><b>Interpretación</b>La explicación que damos a un dato: puede ser correcta, pero hay que comprobarla.</div></li>
+<li><div><b>Criterio común</b>Lo que esperas del puesto, definido antes de valorar y aplicado igual a todas las personas.</div></li>
+<li><div><b>Segunda mirada</b>Pedir a otra persona que revise los hechos en los que apoyas tu decisión.</div></li>
+</ul></section>
+<section><h2 class="lab">Cómo funciona</h2><ol class="how"><li><span class="hn">1</span><div><b>Lee la idea</b>Una sola idea clave, con un caso para verla en tu día.</div></li><li><span class="hn">2</span><div><b>Comprueba y responde</b>Una autoevaluación con su lectura y una mini-práctica de dos minutos. Lo que escribes lo ves solo tú.</div></li><li><span class="hn">3</span><div><b>Da el paso de la semana</b>Uno solo, pequeño. No hace falta hacer uno por semana: haz el que toque y encadénalos a tu ritmo.</div></li></ol><p class="nota" style="color:var(--ink)">Puedes hacerlas en el orden que quieras: cada una se entiende sola. Tu avance se guarda en este dispositivo.</p></section>
+<section><h2 class="lab">Si no sabes por dónde empezar</h2><p class="lead">Un recorrido corto de cinco píldoras, de 15 a 20 minutos en total.</p><div class="ruta">
+<a class="chip" href="#pildora-2">02 Comprobar</a><i>›</i><a class="chip" href="#pildora-4">04 Heredas un equipo</a><i>›</i><a class="chip" href="#pildora-5">05 Nueva información</a><i>›</i><a class="chip" href="#pildora-9">09 Atribución</a><i>›</i><a class="chip" href="#pildora-12">12 Para terminar</a></div></section>
+<section><h2 class="lab">Las 12 píldoras</h2><div class="idx">
+<a class="card" href="#pildora-1"><div class="card-top"><span class="num">01</span><div><h3>Decidimos por atajos</h3><small>Cómo decidimos · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>El cerebro simplifica para ahorrar energía; eso no es culpa de nadie.</p><div class="st"><span id="idx-1-txt">Sin empezar</span><output id="idx-1-n">0 de 7</output></div><div class="bar"><i id="idx-1-bar"></i></div></a>
+<a class="card" href="#pildora-2"><div class="card-top"><span class="num">02</span><div><h3>Lo evidente no está comprobado</h3><small>Cómo decidimos · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Un cuaderno, un bolígrafo y una respuesta que parece obvia.</p><div class="st"><span id="idx-2-txt">Sin empezar</span><output id="idx-2-n">0 de 7</output></div><div class="bar"><i id="idx-2-bar"></i></div></a>
+<a class="card" href="#pildora-3"><div class="card-top"><span class="num">03</span><div><h3>El entorno que nos hace vulnerables</h3><small>Cómo decidimos · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Presión, información incompleta e historial previo.</p><div class="st"><span id="idx-3-txt">Sin empezar</span><output id="idx-3-n">0 de 7</output></div><div class="bar"><i id="idx-3-bar"></i></div></a>
+<a class="card" href="#pildora-4"><div class="card-top"><span class="num">04</span><div><h3>Heredas este equipo: reparte los turnos</h3><small>Un caso: heredas un equipo · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Cinco captadores, cuatro turnos y una semana para cerrar el mes.</p><div class="st"><span id="idx-4-txt">Sin empezar</span><output id="idx-4-n">0 de 8</output></div><div class="bar"><i id="idx-4-bar"></i></div></a>
+<a class="card" href="#pildora-5"><div class="card-top"><span class="num">05</span><div><h3>Ahora sabes algo más: ¿cambias el reparto?</h3><small>Un caso: heredas un equipo · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Cinco datos nuevos. ¿Mantienes o cambias cada decisión?</p><div class="st"><span id="idx-5-txt">Sin empezar</span><output id="idx-5-n">0 de 8</output></div><div class="bar"><i id="idx-5-bar"></i></div></a>
+<a class="card" href="#pildora-6"><div class="card-top"><span class="num">06</span><div><h3>Metasesgo</h3><small>Seis sesgos · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Creer que tus valoraciones son más objetivas que las de otros.</p><div class="st"><span id="idx-6-txt">Sin empezar</span><output id="idx-6-n">0 de 7</output></div><div class="bar"><i id="idx-6-bar"></i></div></a>
+<a class="card" href="#pildora-7"><div class="card-top"><span class="num">07</span><div><h3>Sesgo de simpatía</h3><small>Seis sesgos · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Lo agradable que resulta alguien mejora cómo valoras sus capacidades.</p><div class="st"><span id="idx-7-txt">Sin empezar</span><output id="idx-7-n">0 de 8</output></div><div class="bar"><i id="idx-7-bar"></i></div></a>
+<a class="card" href="#pildora-8"><div class="card-top"><span class="num">08</span><div><h3>Sesgo de rendimiento</h3><small>Seis sesgos · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>El mismo resultado se valora distinto según lo que esperas de cada persona.</p><div class="st"><span id="idx-8-txt">Sin empezar</span><output id="idx-8-n">0 de 8</output></div><div class="bar"><i id="idx-8-bar"></i></div></a>
+<a class="card" href="#pildora-9"><div class="card-top"><span class="num">09</span><div><h3>Sesgo de atribución</h3><small>Seis sesgos · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Explicar un dato por cómo es la persona y no por sus circunstancias.</p><div class="st"><span id="idx-9-txt">Sin empezar</span><output id="idx-9-n">0 de 8</output></div><div class="bar"><i id="idx-9-bar"></i></div></a>
+<a class="card" href="#pildora-10"><div class="card-top"><span class="num">10</span><div><h3>Sesgo de afinidad</h3><small>Seis sesgos · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Favorecer a quien se parece a ti o trabaja como tú.</p><div class="st"><span id="idx-10-txt">Sin empezar</span><output id="idx-10-n">0 de 8</output></div><div class="bar"><i id="idx-10-bar"></i></div></a>
+<a class="card" href="#pildora-11"><div class="card-top"><span class="num">11</span><div><h3>Sesgo de maternidad y paternidad</h3><small>Seis sesgos · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Suponer disponibilidad o compromiso por las responsabilidades de cuidado.</p><div class="st"><span id="idx-11-txt">Sin empezar</span><output id="idx-11-n">0 de 8</output></div><div class="bar"><i id="idx-11-bar"></i></div></a>
+<a class="card" href="#pildora-12"><div class="card-top"><span class="num">12</span><div><h3>Cuando una expectativa se cumple sola</h3><small>Para terminar · 3-4 min</small><small class="para">Dirigida a: Responsables</small></div><span class="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></span></div><p>Cada decisión puede abrir o cerrar una oportunidad. Tu ficha de decisión.</p><div class="st"><span id="idx-12-txt">Sin empezar</span><output id="idx-12-n">0 de 9</output></div><div class="bar"><i id="idx-12-bar"></i></div></a>
+</div></section>
+<section><h2 class="lab">Tu resultado</h2><a class="planc" href="#mi-kit"><b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1" /> <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /> <path d="M12 11h4" /> <path d="M12 16h4" /> <path d="M8 11h.01" /> <path d="M8 16h.01" /></svg>Mi ficha de decisión</b><p>Una ficha con las cinco preguntas antes de decidir, los seis sesgos y lo que has escrito en cada píldora.</p><output id="plan-n">0 de 19 apartados</output><div class="bar"><i id="plan-bar"></i></div></a></section>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<br>Tus respuestas se guardan solo en este dispositivo.</footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-1" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g1-prog-txt">0 de 7</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="g1-bar"><i id="g1-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Decidimos<em>por atajos</em></h1>
+<div class="gancho">Cada semana tomas decenas de pequeñas decisiones sobre tu equipo. Casi todas las tomas rápido y sin darte cuenta, y eso no es un defecto: es cómo funciona el cerebro.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Pensar que tener sesgos es un fallo personal o que solo les pasa a otras personas.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Saber que el cerebro simplifica la realidad para ahorrar energía y que, si no comprobamos los hechos, podemos repetir el mismo error al decidir.</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>Ves a un captador nuevo hablar con soltura en su primer turno y piensas «este va a llegar lejos». No lo has comprobado: has completado la historia con lo que ya sabías. Es un atajo útil para cruzar la calle y poco fiable para decidir a quién acompañas.</p></div>
+<p class="nota" style="margin-top:12px;color:var(--ink)"><b>En esta píldora:</b> <b>Sistema 1</b>, rápido, automático e intuitivo; <b>Sistema 2</b>, lento, analítico y deliberado.</p>
+</section>
+<section><h2 class="lab">¿Sistema 1 o Sistema 2?</h2><p class="lead">Marca con qué sistema se hace cada cosa.</p><div class="zs">
+<div class="z-i" id="g1-r0"><b>Reconocer una cara conocida.</b><span>Piensa en si requiere esfuerzo.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="0" data-k="0">Sistema 1</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Sistema 2</button></div><p class="lect" id="g1-fb0"></p></div>
+<div class="z-i" id="g1-r1"><b class="sent">Comparar dos ofertas con una tabla de datos.</b><span>Piensa en si requiere esfuerzo.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="1" data-k="0">Sistema 1</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Sistema 2</button></div><p class="lect" id="g1-fb1"></p></div>
+<div class="z-i" id="g1-r2"><b class="sent">Decidir a quién acompañas por la primera impresión.</b><span>Piensa en cuánto has analizado.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="2" data-k="0">Sistema 1</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Sistema 2</button></div><p class="lect" id="g1-fb2"></p></div>
+<div class="z-i" id="g1-r3"><b class="sent">Revisar los últimos tres meses de resultados antes de dar feedback.</b><span>Piensa en el esfuerzo que supone.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="3" data-k="0">Sistema 1</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Sistema 2</button></div><p class="lect" id="g1-fb3"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">El material de la formación habla de decenas de miles de decisiones al día, casi todas automáticas, y de que procesamos de forma consciente solo una fracción mínima de lo que percibimos. Son cifras orientativas, no medidas exactas. La rapidez no explica todos los sesgos y deliberar tampoco garantiza objetividad. Según la Asociación Americana de Psicología, un sesgo implícito puede actuar antes de la intención consciente y no implica una conducta discriminatoria en cada caso.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Pensar que pensar más despacio basta. Hay que comprobar hechos concretos, no solo darle más vueltas.</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Piensa en una decisión reciente sobre alguien de tu equipo.</p><div class="qs">
+<div class="q"><label for="g1-a0"><span class="n">1</span>¿Qué decisión rápida has tomado esta semana sobre una persona de tu equipo?</label><p class="h">Una real.</p><p class="eg">Ejemplo: «Decidí a quién acompañar el lunes por la mañana.»</p><textarea id="g1-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g1-a1"><span class="n">2</span>¿Qué hecho concreto la sostenía?</label><p class="h">Algo que otra persona podría comprobar.</p><p class="eg">Ejemplo: «Los resultados de las últimas cuatro semanas.»</p><textarea id="g1-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g1-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Antes de tomar una decisión sobre una persona de tu equipo, escribe en una línea el hecho que la sostiene.</p><label class="chk" for="g1-hecho"><input type="checkbox" id="g1-hecho">Ya escribí el hecho</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Pudiste escribirlo? Si no, ¿qué te faltaba por saber?</div><div class="frase">Decidir deprisa no es lo mismo que decidir con datos.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Inicio</a><a class="btn next" href="#pildora-2">Píldora 02<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g1-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-2" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g2-prog-txt">0 de 7</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="g2-bar"><i id="g2-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Lo evidente<em>no está comprobado</em></h1>
+<div class="gancho">Un cuaderno y un bolígrafo cuestan juntos 1,10 €. El cuaderno cuesta 1 € más que el bolígrafo. ¿Cuánto cuesta el bolígrafo? Antes de seguir, piensa tu primera respuesta y compruébala en silencio.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Fiarte de la respuesta que te sale a la primera.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Comprobar antes de dar por buena una respuesta, sobre todo cuando parece evidente.</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>Si el bolígrafo costara 0,10 €, el cuaderno costaría 1,10 € y juntos serían 1,20 €. La solución es 0,05 €: el cuaderno cuesta 1,05 € y juntos son 1,10 €. Mucha gente responde 0,10 € sin comprobarlo.</p></div>
+</section>
+<section><h2 class="lab">Compruébalo</h2><p class="lead">Marca si cada afirmación es cierta.</p><div class="zs">
+<div class="z-i" id="g2-r0"><b>El bolígrafo cuesta 0,10 €.</b><span>Haz la suma: cuaderno + bolígrafo.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="0" data-k="0">Cierto</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Falso</button></div><p class="lect" id="g2-fb0"></p></div>
+<div class="z-i" id="g2-r1"><b>El bolígrafo cuesta 0,05 €.</b><span>Comprueba con el cuaderno a 1,05 €.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="1" data-k="0">Cierto</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Falso</button></div><p class="lect" id="g2-fb1"></p></div>
+<div class="z-i" id="g2-r2"><b class="sent">Si una respuesta resulta evidente, ya está comprobada.</b><span>Piensa en lo que acabas de ver.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="2" data-k="0">Cierto</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Falso</button></div><p class="lect" id="g2-fb2"></p></div>
+<div class="z-i" id="g2-r3"><b class="sent">Con personas pasa igual: una impresión que parece evidente puede no estar comprobada.</b><span>Piensa en tu equipo.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="3" data-k="0">Cierto</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Falso</button></div><p class="lect" id="g2-fb3"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">Con las personas funciona igual que con el problema: lo que parece evidente es una respuesta rápida, no una respuesta comprobada. Comprobar no es desconfiar: es darte datos para decidir mejor.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Comprobar solo cuando dudas. El problema aparece cuando estás seguro.</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Piensa en una impresión que tengas sobre alguien de tu equipo.</p><div class="qs">
+<div class="q"><label for="g2-a0"><span class="n">1</span>¿Qué impresión tienes de una persona de tu equipo que te parece evidente?</label><p class="h">Una frase sin nombres.</p><p class="eg">Ejemplo: «Que esa persona no tiene ganas de crecer.»</p><textarea id="g2-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g2-a1"><span class="n">2</span>¿Cómo podrías comprobarla?</label><p class="h">Con un dato o una pregunta.</p><p class="eg">Ejemplo: «Preguntándole qué le gustaría hacer en un año.»</p><textarea id="g2-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g2-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Elige una impresión que te parezca evidente sobre alguien de tu equipo y compruébala con un dato o una pregunta.</p><label class="chk" for="g2-hecho"><input type="checkbox" id="g2-hecho">Ya comprobé una impresión</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Cambió algo al comprobarla? Anota qué dato lo hizo.</div><div class="frase">Que algo sea evidente no significa que esté comprobado.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 01</a><a class="btn next" href="#pildora-3">Píldora 03<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g2-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-3" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g3-prog-txt">0 de 7</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="g3-bar"><i id="g3-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Tu contexto<em>te hace vulnerable</em></h1>
+<div class="gancho">Como RE trabajas con objetivos diarios, personas distintas y decisiones continuas. Es el entorno en el que más fácil es tratar una interpretación como si fuera un dato.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Pensar que decidir con experiencia te protege.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Reconocer tres factores del entorno: presión por resultados, información incompleta e historial previo.</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>Es lunes, faltan días para cerrar el mes y un captador baja. Reaccionas rápido (presión), no sabes qué ha pasado en su turno (información incompleta) y recuerdas que «ya el mes pasado fue flojo» (historial). Resultado: lo explicas por su actitud sin haber hablado con él.</p></div>
+</section>
+<section><h2 class="lab">Dato o interpretación</h2><p class="lead">Marca si la frase es un hecho comprobable o una interpretación.</p><div class="zs">
+<div class="z-i" id="g3-r0"><b class="sent">«Este mes ha llegado tarde a dos turnos.»</b><span>Piensa en si otra persona podría comprobarlo.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="0" data-k="0">Dato</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Interpretación</button></div><p class="lect" id="g3-fb0"></p></div>
+<div class="z-i" id="g3-r1"><b class="sent">«Es poco profesional.»</b><span>Piensa en si se puede comprobar.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="1" data-k="0">Dato</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Interpretación</button></div><p class="lect" id="g3-fb1"></p></div>
+<div class="z-i" id="g3-r2"><b class="sent">«Ya el mes pasado fue flojo, así que es normal.»</b><span>Piensa en lo que ya pensabas.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="2" data-k="0">Dato</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Interpretación</button></div><p class="lect" id="g3-fb2"></p></div>
+<div class="z-i" id="g3-r3"><b class="sent">«Este mes ha hecho 22 socios y el pasado 26.»</b><span>Piensa en si lo comprueba el sistema.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="3" data-k="0">Dato</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Interpretación</button></div><p class="lect" id="g3-fb3"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">Resultado de los tres factores juntos: podemos tratar como «evidencia» lo que en realidad es una interpretación. La presión por resultados es real y no se puede quitar; sí se puede parar un minuto a separar el dato de la explicación.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Pensar que si tienes poco tiempo no puedes comprobar nada. Basta con una pregunta: ¿qué sé y qué supongo?</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Piensa en un día de mucha presión.</p><div class="qs">
+<div class="q"><label for="g3-a0"><span class="n">1</span>¿Cuál de los tres factores te afecta más como RE?</label><p class="h">Presión, información incompleta o historial.</p><p class="eg">Ejemplo: «La presión: a final de mes decido muy rápido.»</p><textarea id="g3-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g3-a1"><span class="n">2</span>¿Qué harías en un minuto para separar el dato de la interpretación?</label><p class="h">Una pregunta o un dato que mirar.</p><p class="eg">Ejemplo: «Mirar los últimos tres meses antes de decidir.»</p><textarea id="g3-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g3-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>En la próxima decisión con prisa, tómate un minuto para separar lo que sabes de lo que supones.</p><label class="chk" for="g3-hecho"><input type="checkbox" id="g3-hecho">Ya separé dato e interpretación</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Cambió tu decisión? Anota qué dato te faltaba.</div><div class="frase">Presión, poca información e historial: tres puertas para el automatismo.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 02</a><a class="btn next" href="#pildora-4">Píldora 04<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g3-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-4" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g4-prog-txt">0 de 8</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="g4-bar"><i id="g4-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Heredas<em>este equipo</em></h1>
+<div class="gancho">Es lunes. Queda una semana para cerrar el mes y todavía no has trabajado con estas personas. Tienes 5 captadores con contrato de 25 h y solo 4 turnos de acompañamiento esta semana. Puedes asignarlos ahora o dejar alguno en reserva.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Buscar la respuesta correcta. No la hay: se trata de ver qué te hace decidir.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Decidir con lo que sabes hoy, que es lo que te ha contado el anterior RE, y apuntar en qué te apoyas.</p></div></div>
+<div class="decir cso"><small>Cómo funciona este caso</small><p>Esto es un ejercicio: decide con lo que ves en las tarjetas. En la píldora siguiente recibirás información nueva y verás si cambias algo. Los nombres y los datos son ficticios.</p></div>
+</section>
+<div class="eq" role="list"><div class="cap" role="listitem"><h4>Laura</h4><dl><div><dt>Antigüedad</dt><dd>2 años y 3 meses</dd></div><div><dt>Calidad</dt><dd>Buena</dd></div><div><dt>Socios, últimos 3 meses</dt><dd>30 → 27 → 29</dd></div><div><dt>Socios este mes, hasta hoy</dt><dd>21</dd></div></dl><p class="cm"><small>Comentario del anterior RE</small>«Laura es un regalo. Lleva mucho tiempo y prácticamente no tienes que estar encima.»</p></div><div class="cap" role="listitem"><h4>Dani</h4><dl><div><dt>Antigüedad</dt><dd>6 meses</dd></div><div><dt>Calidad</dt><dd>Mejorable</dd></div><div><dt>Socios, últimos 3 meses</dt><dd>24 → 27 → 33</dd></div><div><dt>Socios este mes, hasta hoy</dt><dd>22</dd></div></dl><p class="cm"><small>Comentario del anterior RE</small>«Dani es de la vieja escuela. Tiene hambre, pregunta y quiere crecer.»</p></div><div class="cap" role="listitem"><h4>Sara</h4><dl><div><dt>Antigüedad</dt><dd>1 año y 2 meses</dd></div><div><dt>Calidad</dt><dd>Muy buena</dd></div><div><dt>Socios, últimos 3 meses</dt><dd>31 → 30 → 31</dd></div><div><dt>Socios este mes, hasta hoy</dt><dd>25</dd></div></dl><p class="cm"><small>Comentario del anterior RE</small>«Sara va haciendo. Para estar contenta necesita salir a las 13 h; empieza antes.»</p></div><div class="cap" role="listitem"><h4>Marcos</h4><dl><div><dt>Antigüedad</dt><dd>3 meses</dd></div><div><dt>Calidad</dt><dd>Correcta</dd></div><div><dt>Socios, últimos 3 meses</dt><dd>— → 26 → 22</dd></div><div><dt>Socios este mes, hasta hoy</dt><dd>19</dd></div></dl><p class="cm"><small>Comentario del anterior RE</small>«Con Marcos tengo dudas. Hay que repetirle cosas y no muestra ambición.»</p></div><div class="cap" role="listitem"><h4>Ana</h4><dl><div><dt>Antigüedad</dt><dd>1 año y 8 meses</dd></div><div><dt>Calidad</dt><dd>Buena</dd></div><div><dt>Socios, últimos 3 meses</dt><dd>34 → 36 → 35</dd></div><div><dt>Socios este mes, hasta hoy</dt><dd>26</dd></div></dl><p class="cm"><small>Comentario del anterior RE</small>«Ana es muy fiable. Dale una campaña cada mes y sabes que la va a sacar adelante.»</p></div></div>
+<section><h2 class="lab">Reparte tus turnos</h2><p class="lead">Marca a quién acompañas esta semana. No tienes que usar los cuatro.</p><div class="zs">
+<div class="z-i" id="g4-r0"><b>Laura</b><span>2 años y 3 meses · calidad Buena · últimos 3 meses 30 → 27 → 29 · este mes 21</span><div class="ok2"><button type="button" aria-pressed="false" data-i="0" data-k="0">Acompaño</button><button type="button" aria-pressed="false" data-i="0" data-k="1">No esta semana</button></div><p class="lect" id="g4-fb0"></p></div>
+<div class="z-i" id="g4-r1"><b>Dani</b><span>6 meses · calidad Mejorable · últimos 3 meses 24 → 27 → 33 · este mes 22</span><div class="ok2"><button type="button" aria-pressed="false" data-i="1" data-k="0">Acompaño</button><button type="button" aria-pressed="false" data-i="1" data-k="1">No esta semana</button></div><p class="lect" id="g4-fb1"></p></div>
+<div class="z-i" id="g4-r2"><b>Sara</b><span>1 año y 2 meses · calidad Muy buena · últimos 3 meses 31 → 30 → 31 · este mes 25</span><div class="ok2"><button type="button" aria-pressed="false" data-i="2" data-k="0">Acompaño</button><button type="button" aria-pressed="false" data-i="2" data-k="1">No esta semana</button></div><p class="lect" id="g4-fb2"></p></div>
+<div class="z-i" id="g4-r3"><b>Marcos</b><span>3 meses · calidad Correcta · últimos 3 meses — → 26 → 22 · este mes 19</span><div class="ok2"><button type="button" aria-pressed="false" data-i="3" data-k="0">Acompaño</button><button type="button" aria-pressed="false" data-i="3" data-k="1">No esta semana</button></div><p class="lect" id="g4-fb3"></p></div>
+<div class="z-i" id="g4-r4"><b>Ana</b><span>1 año y 8 meses · calidad Buena · últimos 3 meses 34 → 36 → 35 · este mes 26</span><div class="ok2"><button type="button" aria-pressed="false" data-i="4" data-k="0">Acompaño</button><button type="button" aria-pressed="false" data-i="4" data-k="1">No esta semana</button></div><p class="lect" id="g4-fb4"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">No hay obligación de usar todos los turnos desde el lunes. Si dejas alguno en reserva, piensa qué tendría que pasar para decidir a quién darlo.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Decidir por el comentario del anterior RE sin mirar los datos. El comentario es su interpretación.</p></div>
+</section>
+<div class="cnt" id="cv-cnt" role="status" aria-live="polite" data-over="0">Turnos asignados: 0 de 4. Quedan 4 en reserva.</div>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Explica tu decisión con tus palabras.</p><div class="qs">
+<div class="q"><label for="g4-a0"><span class="n">1</span>¿A quién acompañas, a quién dejas fuera y por qué?</label><p class="h">Una frase por persona.</p><p class="eg">Ejemplo: «Acompaño a Marcos y a Dani porque llevan menos tiempo; dejo fuera a Ana y a Sara por sus resultados estables.»</p><textarea id="g4-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g4-a1"><span class="n">2</span>Si dejas un turno en reserva, ¿qué tendría que pasar para decidir a quién dárselo?</label><p class="h">Un dato o una conversación.</p><p class="eg">Ejemplo: «Que a mitad de semana alguien baje de su nivel habitual.»</p><textarea id="g4-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g4-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Guarda tu reparto y no lo cambies hasta ver la información nueva de la píldora siguiente.</p><label class="chk" for="g4-hecho"><input type="checkbox" id="g4-hecho">Ya guardé mi reparto</label></div>
+<div class="rev"><b>Dentro de una semana</b>Si esto fuera real: ¿habrías preguntado a cada persona antes de repartir?</div><div class="frase">Decide, apunta en qué te apoyas y compáralo después.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 03</a><a class="btn next" href="#pildora-5">Píldora 05<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g4-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-5" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g5-prog-txt">0 de 8</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="g5-bar"><i id="g5-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Ahora sabes<em>algo más</em></h1>
+<div class="gancho">Conoces mejor al equipo. ¿Cambia alguna de tus decisiones? El objetivo no era acertar, era descubrir qué estaba influyendo en tu decisión.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Defender tu primer reparto porque ya lo habías decidido.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Volver a los datos y cambiar de opinión ante nueva información, que es una muestra de rigor profesional.</p></div></div>
+<div class="decir cso"><small>Qué se aprende de este caso</small><p>No podemos evitar tener sesgos. Sí podemos aprender a reconocer cuándo actúan y volver a los datos antes de decidir.</p></div>
+</section>
+<section><h2 class="lab">Información nueva</h2><p class="lead">Marca si mantienes o cambias tu decisión sobre cada persona.</p><div class="zs">
+<div class="z-i" id="g5-r0"><b class="sent">Laura: lleva 3 meses por debajo de su rendimiento habitual y nadie ha trabajado con ella qué puede estar pasando.</b><span>¿Mantienes tu decisión sobre Laura?</span><div class="ok2"><button type="button" aria-pressed="false" data-i="0" data-k="0">Mantengo</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Cambio</button></div><p class="lect" id="g5-fb0"></p></div>
+<div class="z-i" id="g5-r1"><b class="sent">Dani: su evolución es positiva, pero cuando trabaja sin acompañamiento su rendimiento baja. Su calidad sigue siendo mejorable.</b><span>¿Mantienes tu decisión sobre Dani?</span><div class="ok2"><button type="button" aria-pressed="false" data-i="1" data-k="0">Mantengo</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Cambio</button></div><p class="lect" id="g5-fb1"></p></div>
+<div class="z-i" id="g5-r2"><b class="sent">Sara: le ha contado a una compañera que le gustaría crecer en Wesser, pero nunca se ha presentado a un proceso porque no sabe si está preparada. Ayuda habitualmente a las nuevas incorporaciones.</b><span>¿Mantienes tu decisión sobre Sara?</span><div class="ok2"><button type="button" aria-pressed="false" data-i="2" data-k="0">Mantengo</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Cambio</button></div><p class="lect" id="g5-fb2"></p></div>
+<div class="z-i" id="g5-r3"><b class="sent">Marcos: parte de sus resultados coinciden con campañas y localizaciones de menor rendimiento y ha tenido menos acompañamiento efectivo que Dani. No hay datos que demuestren falta de ambición.</b><span>¿Mantienes tu decisión sobre Marcos?</span><div class="ok2"><button type="button" aria-pressed="false" data-i="3" data-k="0">Mantengo</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Cambio</button></div><p class="lect" id="g5-fb3"></p></div>
+<div class="z-i" id="g5-r4"><b class="sent">Ana: sus ajustes de horario no han afectado a sus resultados ni a la disponibilidad acordada. Ha preguntado alguna vez por otros puestos y estaría interesada en crecer.</b><span>¿Mantienes tu decisión sobre Ana?</span><div class="ok2"><button type="button" aria-pressed="false" data-i="4" data-k="0">Mantengo</button><button type="button" aria-pressed="false" data-i="4" data-k="1">Cambio</button></div><p class="lect" id="g5-fb4"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">Este caso no pretende que hayas acertado. Fíjate en qué cambió cuando apareció información nueva: eso es lo que tu primera decisión daba por cierto.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Pensar que cambiar de decisión es un fallo. Cambiar ante evidencias nuevas es rigor.</p></div>
+</section>
+<div class="decir cso" id="cv-res" aria-live="polite"><small>Tu comparación</small><p>Primero reparte los turnos en la píldora 4: marca a quién acompañas.</p></div><h2 class="lab" style="margin-top:22px">Los comentarios del anterior RE, uno a uno</h2><div class="faq"><div><b>«Laura es un regalo… no tienes que estar encima»</b><p>Interpretación basada en confianza heredada. Pregunta de control: ¿qué datos de los últimos tres meses la sostienen?</p></div><div><b>«Dani es de la vieja escuela. Tiene hambre»</b><p>Expectativa de potencial. Pregunta de control: ¿qué conductas concretas ves?</p></div><div><b>«Sara va haciendo. Para estar contenta necesita salir a las 13 h»</b><p>Suposición sobre su disponibilidad. Pregunta de control: ¿lo ha dicho ella?</p></div><div><b>«Con Marcos tengo dudas… no muestra ambición»</b><p>Causa supuesta. Pregunta de control: ¿qué contexto hay detrás de su resultado?</p></div><div><b>«Ana es muy fiable. Dale una campaña cada mes»</b><p>Etiqueta que encasilla: ser fiable no dice si quiere crecer. Pregunta de control: ¿se lo has preguntado?</p></div></div>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Resume lo que has visto en este caso.</p><div class="qs">
+<div class="q"><label for="g5-a0"><span class="n">1</span>¿Qué decisión has cambiado y qué dato la cambió?</label><p class="h">Una frase.</p><p class="eg">Ejemplo: «Cambié lo de Laura: llevaba tres meses bajando sin que nadie hablara con ella.»</p><textarea id="g5-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g5-a1"><span class="n">2</span>¿Qué comentario del anterior RE era una interpretación y no un dato?</label><p class="h">Elige uno.</p><p class="eg">Ejemplo: ««No muestra ambición»: no había datos que lo apoyaran.»</p><textarea id="g5-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g5-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Antes de dar por buena una explicación sobre alguien, pregúntate «¿cómo lo sé?» y apunta el dato.</p><label class="chk" for="g5-hecho"><input type="checkbox" id="g5-hecho">Ya me hice la pregunta</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Qué explicaciones tuyas necesitaban un dato que no tenías?</div><div class="frase">No era acertar: era descubrir qué influía.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 04</a><a class="btn next" href="#pildora-6">Píldora 06<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g5-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-6" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g6-prog-txt">0 de 7</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0" id="g6-bar"><i id="g6-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">El<em>metasesgo</em></h1>
+<div class="gancho">Nos cuesta reconocer nuestros propios sesgos y creemos que nuestras valoraciones son más objetivas que las de otras personas. Cuanto más experiencia, más fácil es dejar de contrastar.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Pensar que la experiencia te protege de los sesgos. La experiencia aporta valor, pero no garantiza que no los haya.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Revisar qué hechos sostienen la decisión y pedir una segunda mirada, también cuando estás muy seguro.</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>Un RE dice «conozco perfectamente a mi gente» y mantiene su valoración de Laura sin revisar cómo ha evolucionado en los últimos meses. La confianza sustituye a la comprobación.</p></div>
+</section>
+<section><h2 class="lab">¿Se ve el sesgo?</h2><p class="lead">Marca si el ejemplo muestra el sesgo.</p><div class="zs">
+<div class="z-i" id="g6-r0"><b class="sent">«Conozco perfectamente a mi gente.» El RE mantiene su valoración de Laura sin revisar cómo ha evolucionado en los últimos meses.</b><span>Piensa en qué sustituye a la comprobación.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="0" data-k="0">Metasesgo</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Decisión contrastada</button></div><p class="lect" id="g6-fb0"></p></div>
+<div class="z-i" id="g6-r1"><b class="sent">Una compañera RE propone contrastar su visión de una persona. El RE responde: «En mi caso no hace falta. Sé distinguir un mal día de una falta de actitud.»</b><span>Piensa en si acepta otra mirada.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="1" data-k="0">Metasesgo</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Decisión contrastada</button></div><p class="lect" id="g6-fb1"></p></div>
+<div class="z-i" id="g6-r2"><b class="sent">«Después de tantos años, sé quién puede crecer.» El RE recomienda una promoción sin explicar qué conductas apoyan su valoración.</b><span>Piensa en lo que apoya la recomendación.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="2" data-k="0">Metasesgo</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Decisión contrastada</button></div><p class="lect" id="g6-fb2"></p></div>
+<div class="z-i" id="g6-r3"><b class="sent">Antes de recomendar a Ana, el RE repasa sus últimos seis meses y pide a otro RE que lea sus notas.</b><span>Piensa en qué contrasta.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="3" data-k="0">Metasesgo</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Decisión contrastada</button></div><p class="lect" id="g6-fb3"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">No basta con que una decisión tenga consenso: conviene pedir evidencias y admitir información que pueda hacerla cambiar. La buena intención tampoco evita el sesgo.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Pedir una segunda mirada solo cuando dudas. Es más útil cuando estás muy seguro.</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Piensa en tu equipo de esta semana.</p><div class="qs">
+<div class="q"><label for="g6-a0"><span class="n">1</span>¿En qué decisión sobre tu equipo estás más seguro de tener razón?</label><p class="h">Una real, sin nombres.</p><p class="eg">Ejemplo: «En quién está listo para crecer.»</p><textarea id="g6-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g6-a1"><span class="n">2</span>¿Quién podría darte una segunda mirada y qué le enseñarías?</label><p class="h">Una persona y unos hechos.</p><p class="eg">Ejemplo: «A otro RE, mis notas de los últimos seis meses.»</p><textarea id="g6-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g6-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Pide a otra persona que revise los hechos de una decisión en la que estés muy seguro.</p><label class="chk" for="g6-hecho"><input type="checkbox" id="g6-hecho">Ya pedí una segunda mirada</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Cambió algo? Si no cambió nada, ¿qué dato la reforzó?</div><div class="frase">Tu confianza no es un dato.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 05</a><a class="btn next" href="#pildora-7">Píldora 07<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g6-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-7" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g7-prog-txt">0 de 8</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="g7-bar"><i id="g7-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Sesgo de<em>simpatía</em></h1>
+<div class="gancho">La buena conexión personal con alguien mejora nuestra valoración de sus capacidades, aunque no tengamos evidencias suficientes. Lo agradable del trato ocupa el lugar de las evidencias.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Pensar que tratar mejor a quien te cae bien es inocente. Puede cambiar la paciencia, el tiempo y la confianza que das.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Valorar las conductas relevantes con criterios comunes y revisar si el agrado cambia tu respuesta ante un mismo hecho.</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>Con Dani la conversación fluye y le dedicas más tiempo. Con Marcos, más reservado, terminas al acabar el turno. El agrado decide cuánto acompañas, no lo que cada uno necesita.</p></div>
+</section>
+<section><h2 class="lab">¿Se ve el sesgo?</h2><p class="lead">Marca si el ejemplo muestra el sesgo.</p><div class="zs">
+<div class="z-i" id="g7-r0"><b class="sent">Con Dani la conversación fluye y el RE prolonga su acompañamiento para resolver dudas. Con Marcos, más reservado, termina al acabar el turno.</b><span>Piensa en qué decide el tiempo.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="0" data-k="0">Simpatía</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Sin sesgo</button></div><p class="lect" id="g7-fb0"></p></div>
+<div class="z-i" id="g7-r1"><b class="sent">Dani y Sara omiten el mismo paso del discurso. El RE lo describe como «un despiste» en Dani y como «falta de atención» en Sara.</b><span>Piensa en el mismo hecho, dos explicaciones.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="1" data-k="0">Simpatía</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Sin sesgo</button></div><p class="lect" id="g7-fb1"></p></div>
+<div class="z-i" id="g7-r2"><b class="sent">El RE dice de Dani: «Da gusto trabajar con él, tiene mucho potencial». En sus notas no aparecen conductas que expliquen ese potencial.</b><span>Piensa en lo que respalda el potencial.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="2" data-k="0">Simpatía</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Sin sesgo</button></div><p class="lect" id="g7-fb2"></p></div>
+<div class="z-i" id="g7-r3"><b class="sent">El RE dedica el mismo tiempo a Dani y a Marcos y anota, para cada uno, qué paso del discurso trabajaron.</b><span>Piensa en qué criterio usa.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="3" data-k="0">Simpatía</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Sin sesgo</button></div><p class="lect" id="g7-fb3"></p></div>
+<div class="z-i" id="g7-r4"><b class="sent">Dani y Sara omiten el mismo paso y el RE lo anota igual en ambos y lo corrige con la misma pregunta.</b><span>Piensa en si el trato cambia.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="4" data-k="0">Simpatía</button><button type="button" aria-pressed="false" data-i="4" data-k="1">Sin sesgo</button></div><p class="lect" id="g7-fb4"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">Diferencia con la afinidad: en la simpatía pesa que la persona nos resulte agradable; en la afinidad, que se parezca a nosotros. Pueden coincidir, pero no son lo mismo.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Pensar que el remedio es dejar de ser cercano. Se trata de aplicar el mismo criterio, no de tratar a todos con frialdad.</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Piensa en tu equipo de esta semana.</p><div class="qs">
+<div class="q"><label for="g7-a0"><span class="n">1</span>¿Con quién de tu equipo es más fácil hablar y cómo lo notas en tu tiempo o tu paciencia?</label><p class="h">Sin nombres.</p><p class="eg">Ejemplo: «Con una persona alargo los acompañamientos y con otra los acabo cuando termina el turno.»</p><textarea id="g7-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g7-a1"><span class="n">2</span>¿Qué criterio común aplicarás a todas las personas?</label><p class="h">Una conducta que mirar igual.</p><p class="eg">Ejemplo: «Cuánto tiempo dedico a cada persona según lo que necesita.»</p><textarea id="g7-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g7-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Esta semana, anota cuánto tiempo dedicas a cada persona de tu equipo y qué necesitaba cada una.</p><label class="chk" for="g7-hecho"><input type="checkbox" id="g7-hecho">Ya anoté el tiempo de cada persona</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Qué diferencias hay entre el tiempo y lo que cada persona necesitaba?</div><div class="frase">El agrado no es una evidencia.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 06</a><a class="btn next" href="#pildora-8">Píldora 08<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g7-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-8" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g8-prog-txt">0 de 8</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="g8-bar"><i id="g8-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Sesgo de<em>rendimiento</em></h1>
+<div class="gancho">Una misma actuación recibe una valoración distinta según las expectativas que ya tenemos sobre la persona. Las etiquetas previas cambian el nivel de exigencia.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Pensar que valoras igual a todo el mundo porque lo haces con buena intención.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Definir de antemano qué esperas del puesto y valorar resultados y conductas con esos criterios, considerando el contexto.</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>Laura y Marcos terminan la semana con el mismo resultado. De Laura dices «ha tenido una mala racha» y de Marcos «sigue demostrando que le cuesta». Mismo dato, dos lecturas.</p></div>
+</section>
+<section><h2 class="lab">¿Se ve el sesgo?</h2><p class="lead">Marca si el ejemplo muestra el sesgo.</p><div class="zs">
+<div class="z-i" id="g8-r0"><b class="sent">Laura y Marcos terminan una semana con el mismo resultado. «Laura ha tenido una mala racha. Marcos sigue demostrando que le cuesta.»</b><span>Piensa en lo que cambia entre dos mismos resultados.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="0" data-k="0">Rendimiento</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Sin sesgo</button></div><p class="lect" id="g8-fb0"></p></div>
+<div class="z-i" id="g8-r1"><b class="sent">Sara y Dani necesitan corregir el mismo paso del discurso. «Con Sara esperaba que ya estuviera resuelto. Dani lo aprenderá con práctica.»</b><span>Piensa en el nivel de exigencia.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="1" data-k="0">Rendimiento</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Sin sesgo</button></div><p class="lect" id="g8-fb1"></p></div>
+<div class="z-i" id="g8-r2"><b class="sent">Ana suele rendir bien, pero tiene un mes flojo. Al hablar de una promoción, el RE concluye «todavía no está preparada» basándose solo en ese mes.</b><span>Piensa en cuántos datos usa.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="2" data-k="0">Rendimiento</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Sin sesgo</button></div><p class="lect" id="g8-fb2"></p></div>
+<div class="z-i" id="g8-r3"><b class="sent">Laura y Marcos terminan con el mismo resultado. El RE revisa para ambos los últimos meses y el contexto antes de valorar.</b><span>Piensa en qué hace igual para los dos.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="3" data-k="0">Rendimiento</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Sin sesgo</button></div><p class="lect" id="g8-fb3"></p></div>
+<div class="z-i" id="g8-r4"><b class="sent">Ana tiene un mes flojo. El RE mira la serie de los últimos seis meses y se lo comenta a Ana antes de sacar conclusiones.</b><span>Piensa en cuántos datos usa.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="4" data-k="0">Rendimiento</button><button type="button" aria-pressed="false" data-i="4" data-k="1">Sin sesgo</button></div><p class="lect" id="g8-fb4"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">Las diferencias de juicio deben apoyarse en requisitos y contextos pertinentes, no en etiquetas. El tercer ejemplo también muestra el peso excesivo de la información más reciente: revisar una serie de datos evita decidir el futuro con un único resultado.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Cambiar el criterio según la persona y llamarlo «adaptarse». Adaptar el apoyo es válido; adaptar el nivel de exigencia sin motivo, no.</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Piensa en tu equipo de esta semana.</p><div class="qs">
+<div class="q"><label for="g8-a0"><span class="n">1</span>¿A quién le exiges más o menos de lo que le pedirías a otra persona con el mismo resultado?</label><p class="h">Sin nombres.</p><p class="eg">Ejemplo: «Exijo más a quien lleva más tiempo, aunque el resultado sea igual.»</p><textarea id="g8-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g8-a1"><span class="n">2</span>¿Qué definirás antes de valorar el mes?</label><p class="h">Qué esperas del puesto y cómo lo medirás.</p><p class="eg">Ejemplo: «Cuántos socios por turno y qué pasos del discurso, igual para todos.»</p><textarea id="g8-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g8-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Antes de valorar un mes, escribe qué esperas del puesto y aplícalo a todo el equipo.</p><label class="chk" for="g8-hecho"><input type="checkbox" id="g8-hecho">Ya definí mis criterios</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Valoraste a todas las personas con los mismos criterios? Anota dónde dudaste.</div><div class="frase">El mismo dato merece la misma lectura.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 07</a><a class="btn next" href="#pildora-9">Píldora 09<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g8-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-9" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g9-prog-txt">0 de 8</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="g9-bar"><i id="g9-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Sesgo de<em>atribución</em></h1>
+<div class="gancho">Explicamos una conducta o un resultado por características de la persona sin considerar suficientemente las circunstancias. Atribuimos a la persona lo que puede deberse al contexto.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Quitar mérito o justificar cualquier resultado. Una explicación sobre la persona puede ser correcta: hay que comprobarla.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Separar el hecho de la explicación. Preguntar qué ha ocurrido y revisar el contexto antes de atribuir una causa.</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>Marcos hace menos socios y piensas «le falta esfuerzo». No has mirado que ha trabajado en localizaciones de menor rendimiento ni cuánto acompañamiento ha tenido. Has pasado del dato a la causa sin comprobarla.</p></div>
+</section>
+<section><h2 class="lab">¿Se ve el sesgo?</h2><p class="lead">Marca el sesgo que muestra cada ejemplo, o si no hay sesgo.</p><div class="zs">
+<div class="z-i" id="g9-r0"><b class="sent">Marcos consigue menos socios. El RE lo atribuye a falta de esfuerzo sin revisar que ha trabajado en localizaciones de menor rendimiento.</b><span>Piensa en si explica por la persona o por el contexto.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="0" data-k="0">Atribución</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Rendimiento</button><button type="button" aria-pressed="false" data-i="0" data-k="2">Sin sesgo</button></div><p class="lect" id="g9-fb0"></p></div>
+<div class="z-i" id="g9-r1"><b class="sent">Sara está más seria de lo habitual. El RE comunica al RP que «está desmotivada» sin haber hablado con ella.</b><span>Piensa en lo que se ha comprobado.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="1" data-k="0">Atribución</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Rendimiento</button><button type="button" aria-pressed="false" data-i="1" data-k="2">Sin sesgo</button></div><p class="lect" id="g9-fb1"></p></div>
+<div class="z-i" id="g9-r2"><b class="sent">Ana obtiene muy buenos resultados. El RE concluye que funcionaría igual en cualquier campaña sin revisar la ubicación o el apoyo recibido.</b><span>Piensa en lo que se da por hecho.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="2" data-k="0">Atribución</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Rendimiento</button><button type="button" aria-pressed="false" data-i="2" data-k="2">Sin sesgo</button></div><p class="lect" id="g9-fb2"></p></div>
+<div class="z-i" id="g9-r3"><b class="sent">«Con Sara esperaba que ya estuviera resuelto. Dani lo aprenderá con práctica.»</b><span>Piensa en lo que se espera de cada uno.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="3" data-k="0">Atribución</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Rendimiento</button><button type="button" aria-pressed="false" data-i="3" data-k="2">Sin sesgo</button></div><p class="lect" id="g9-fb3"></p></div>
+<div class="z-i" id="g9-r4"><b class="sent">Marcos consigue menos socios. El RE revisa campaña, localización y acompañamiento recibido y le pregunta cómo lo ha vivido.</b><span>Piensa en si pregunta antes de explicar.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="4" data-k="0">Atribución</button><button type="button" aria-pressed="false" data-i="4" data-k="1">Rendimiento</button><button type="button" aria-pressed="false" data-i="4" data-k="2">Sin sesgo</button></div><p class="lect" id="g9-fb4"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">Distingue rendimiento de atribución: en el rendimiento cambia la exigencia según la persona; en la atribución cambia la explicación del mismo dato (persona o contexto). Preguntar por localización, campaña, acompañamiento y otras circunstancias relevantes ayuda a comprobarlo.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Dar siempre la explicación del contexto. Se trata de distinguir el dato de la causa que supones, no de justificar todo.</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Piensa en tu equipo de esta semana.</p><div class="qs">
+<div class="q"><label for="g9-a0"><span class="n">1</span>¿Qué dato de tu equipo estás explicando por la persona esta semana?</label><p class="h">Sin nombres.</p><p class="eg">Ejemplo: «Que un captador haga menos socios porque no se esfuerza.»</p><textarea id="g9-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g9-a1"><span class="n">2</span>¿Qué preguntarás antes de atribuir una causa?</label><p class="h">Sobre contexto o sobre la persona.</p><p class="eg">Ejemplo: «En qué localización y con qué acompañamiento ha trabajado.»</p><textarea id="g9-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g9-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Antes de dar una explicación sobre un resultado, pregunta por el contexto: campaña, localización y acompañamiento.</p><label class="chk" for="g9-hecho"><input type="checkbox" id="g9-hecho">Ya pregunté por el contexto</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Cambió tu explicación? Anota qué circunstancia no habías mirado.</div><div class="frase">No atribuyas a la persona lo que puede ser contexto.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 08</a><a class="btn next" href="#pildora-10">Píldora 10<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g9-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-10" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g10-prog-txt">0 de 8</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="g10-bar"><i id="g10-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Sesgo de<em>afinidad</em></h1>
+<div class="gancho">Favorecemos a personas que comparten nuestra trayectoria, intereses o forma de trabajar, porque esa semejanza nos resulta familiar.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Pensar que tu estilo es la medida de un buen captador.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Definir qué resultados y conductas requiere el puesto y comprobarlos también en personas con estilos diferentes al tuyo.</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>Conectas con el discurso enérgico de Dani, parecido al tuyo, y te parece menos eficaz el estilo pausado de Sara, aunque sus resultados sean buenos. Tu estilo se ha convertido en la referencia.</p></div>
+</section>
+<section><h2 class="lab">¿Se ve el sesgo?</h2><p class="lead">Marca el sesgo que muestra cada ejemplo, o si no hay sesgo.</p><div class="zs">
+<div class="z-i" id="g10-r0"><b class="sent">El RE conecta con el discurso enérgico de Dani, parecido al suyo. Considera menos eficaz el estilo pausado de Sara, aunque sus resultados sean buenos.</b><span>Piensa en si pesa el parecido o el agrado.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="0" data-k="0">Afinidad</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Simpatía</button><button type="button" aria-pressed="false" data-i="0" data-k="2">Sin sesgo</button></div><p class="lect" id="g10-fb0"></p></div>
+<div class="z-i" id="g10-r1"><b class="sent">El RE practica más con quien aplica sus mismas técnicas. Dedica menos tiempo a explorar otra técnica que un captador usa con buenos resultados.</b><span>Piensa en qué técnicas prioriza.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="1" data-k="0">Afinidad</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Simpatía</button><button type="button" aria-pressed="false" data-i="1" data-k="2">Sin sesgo</button></div><p class="lect" id="g10-fb1"></p></div>
+<div class="z-i" id="g10-r2"><b class="sent">«Marcos me recuerda a mí cuando empecé.» Esa semejanza hace que el RE lo proponga para crecer antes de comparar las competencias del equipo.</b><span>Piensa en qué se compara antes.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="2" data-k="0">Afinidad</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Simpatía</button><button type="button" aria-pressed="false" data-i="2" data-k="2">Sin sesgo</button></div><p class="lect" id="g10-fb2"></p></div>
+<div class="z-i" id="g10-r3"><b class="sent">Con Dani la conversación fluye y el RE prolonga su acompañamiento. Con Marcos, más reservado, termina al acabar el turno.</b><span>Piensa en si pesa el parecido o el agrado.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="3" data-k="0">Afinidad</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Simpatía</button><button type="button" aria-pressed="false" data-i="3" data-k="2">Sin sesgo</button></div><p class="lect" id="g10-fb3"></p></div>
+<div class="z-i" id="g10-r4"><b class="sent">El RE describe qué conductas exige el puesto y las comprueba en Sara y en Dani, aunque tengan estilos distintos.</b><span>Piensa en si el estilo importa.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="4" data-k="0">Afinidad</button><button type="button" aria-pressed="false" data-i="4" data-k="1">Simpatía</button><button type="button" aria-pressed="false" data-i="4" data-k="2">Sin sesgo</button></div><p class="lect" id="g10-fb4"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">Una técnica distinta puede ser válida si cumple los requisitos del trabajo. Revisa qué significa «encaje» y descríbelo con comportamientos profesionales, sin copiar un único perfil.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Confundir afinidad con simpatía. Afinidad es preferencia por semejanza; simpatía, por agrado. Pueden coincidir.</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Piensa en tu equipo de esta semana.</p><div class="qs">
+<div class="q"><label for="g10-a0"><span class="n">1</span>¿Qué estilo de tu equipo te cuesta más valorar bien porque es distinto al tuyo?</label><p class="h">Sin nombres.</p><p class="eg">Ejemplo: «El de quien habla más despacio que yo.»</p><textarea id="g10-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g10-a1"><span class="n">2</span>¿Qué conductas y resultados exige el puesto, con independencia del estilo?</label><p class="h">Dos o tres.</p><p class="eg">Ejemplo: «Explicar el contrato con claridad y cerrar con una pregunta.»</p><textarea id="g10-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g10-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Escribe tres conductas del puesto, sin hablar de estilo, y compruébalas en alguien muy distinto a ti.</p><label class="chk" for="g10-hecho"><input type="checkbox" id="g10-hecho">Ya comprobé las conductas</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Qué has aprendido de un estilo distinto al tuyo?</div><div class="frase">Tu estilo no es la medida del puesto.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-9"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 09</a><a class="btn next" href="#pildora-11">Píldora 11<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g10-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-11" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g11-prog-txt">0 de 8</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0" id="g11-bar"><i id="g11-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Maternidad<em>y paternidad</em></h1>
+<div class="gancho">Suponemos disponibilidad, compromiso o capacidad a partir de la maternidad, la paternidad o las responsabilidades de cuidado. Puede pasar también con buena intención.</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Pensar que proteger a alguien es siempre neutro. Dejar de ofrecer una oportunidad para ponérselo fácil también la limita.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Explicar los requisitos reales y preguntar por disponibilidad e intereses en condiciones equivalentes, sin anticipar la respuesta.</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>Sara y Dani tienen hijos y han confirmado la misma disponibilidad. Ante un cambio de turno, consultas primero a Dani porque crees que Sara lo tendrá más difícil. Has respondido por ella antes de preguntarle.</p></div>
+</section>
+<section><h2 class="lab">¿Hay sesgo?</h2><p class="lead">Marca si el ejemplo muestra el sesgo o no.</p><div class="zs">
+<div class="z-i" id="g11-r0"><b class="sent">Sara y Dani tienen hijos y han confirmado la misma disponibilidad. Ante un cambio de turno, el RE consulta primero a Dani porque cree que Sara lo tendrá más difícil.</b><span>Piensa en lo que se supone.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="0" data-k="0">Sesgo</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Sin sesgo</button></div><p class="lect" id="g11-fb0"></p></div>
+<div class="z-i" id="g11-r1"><b class="sent">El RE propone a Dani para una campaña fuera de la ciudad. A Sara le reserva una opción cerca de casa «para ponérselo más fácil», sin preguntar qué prefiere.</b><span>Piensa en si pregunta.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="1" data-k="0">Sesgo</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Sin sesgo</button></div><p class="lect" id="g11-fb1"></p></div>
+<div class="z-i" id="g11-r2"><b class="sent">Ana ha mostrado interés por asumir más responsabilidad. El RE deja de proponerla porque supone que ahora «preferirá centrarse en su familia».</b><span>Piensa en lo que supone.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="2" data-k="0">Sesgo</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Sin sesgo</button></div><p class="lect" id="g11-fb2"></p></div>
+<div class="z-i" id="g11-r3"><b class="sent">Ante un cambio de turno, el RE pregunta a Sara y a Dani en el mismo orden y con las mismas condiciones, y respeta lo que cada uno responde.</b><span>Piensa en si pregunta igual.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="3" data-k="0">Sesgo</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Sin sesgo</button></div><p class="lect" id="g11-fb3"></p></div>
+<div class="z-i" id="g11-r4"><b class="sent">Sara le dice que esta semana no puede viajar por una razón familiar. El RE lo tiene en cuenta como dato declarado.</b><span>Piensa en quién lo ha dicho.</span><div class="ok2"><button type="button" aria-pressed="false" data-i="4" data-k="0">Sesgo</button><button type="button" aria-pressed="false" data-i="4" data-k="1">Sin sesgo</button></div><p class="lect" id="g11-fb4"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">No asumas menor compromiso de una madre ni mayor disponibilidad de un padre. Comprueba horario, viajes y condiciones pertinentes con preguntas equivalentes. Una limitación declarada es un dato; una limitación supuesta, no. Los casos son ficticios.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Dejar de preguntar para no incomodar. Preguntar igual a todas las personas es lo que evita suponer.</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Piensa en tu equipo de esta semana.</p><div class="qs">
+<div class="q"><label for="g11-a0"><span class="n">1</span>¿Qué oportunidad de tu equipo podrías estar dejando de ofrecer por suponer algo sobre la vida de alguien?</label><p class="h">Sin nombres.</p><p class="eg">Ejemplo: «Una campaña fuera de la ciudad que no he propuesto a una persona.»</p><textarea id="g11-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g11-a1"><span class="n">2</span>¿Qué pregunta equivalente harás a todo el equipo?</label><p class="h">Una pregunta sobre disponibilidad e intereses.</p><p class="eg">Ejemplo: «¿Te interesa esta campaña y qué necesitarías para hacerla?»</p><textarea id="g11-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g11-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>La próxima vez que ofrezcas una oportunidad, haz la misma pregunta a todas las personas que cumplen los requisitos.</p><label class="chk" for="g11-hecho"><input type="checkbox" id="g11-hecho">Ya hice la misma pregunta a todas</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Alguna respuesta te sorprendió? Anota qué habrías supuesto.</div><div class="frase">Pregunta, no supongas.</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 10</a><a class="btn next" href="#pildora-12">Píldora 12<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g11-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-pildora-12" class="view" hidden>
+<div class="prog" aria-live="polite"><div class="prog-in"><div class="prog-row"><span>Tu avance en esta píldora</span><output id="g12-prog-txt">0 de 9</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0" id="g12-bar"><i id="g12-bar-i"></i></div></div></div>
+<main class="wrap"><div class="backrow"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a></div>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Cuando una expectativa<em>se cumple sola</em></h1>
+<div class="gancho">Cada decisión que tomamos sobre una persona puede abrir o cerrar una oportunidad. Por eso, antes de decidir, merece la pena preguntarse: ¿qué sé y qué estoy suponiendo?</div>
+<div class="cols"><div class="col-a">
+<section><h2 class="lab">La idea clave</h2><div class="duo"><div class="no"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /> <path d="m6 6 12 12" /></svg>Lo que no es</h3><p>Pensar que una expectativa es solo una opinión sin consecuencias.</p></div><div class="si"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Lo que sí es</h3><p>Ver el ciclo: expectativa, decisión, oportunidad y resultado. El resultado confirma la expectativa y parece que «ya lo sabías».</p></div></div>
+<div class="decir cso"><small>Así se ve en tu día</small><p>«Tiene potencial» (expectativa) lleva a darle más tiempo, confianza y feedback (decisión), que le da más ocasiones de aprender y destacar (oportunidad), y mejora (resultado), lo que confirma la expectativa. Al revés: menos confianza, menos oportunidades, peor evolución y «ya lo sabía».</p></div>
+</section>
+<section><h2 class="lab">Las piezas del ciclo</h2><p class="lead">Marca a qué pieza del ciclo corresponde cada frase.</p><div class="zs">
+<div class="z-i" id="g12-r0"><b class="sent">«Tiene potencial.»</b><span>Piensa en si es un juicio previo.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="0" data-k="0">Expectativa</button><button type="button" aria-pressed="false" data-i="0" data-k="1">Decisión</button><button type="button" aria-pressed="false" data-i="0" data-k="2">Resultado</button></div><p class="lect" id="g12-fb0"></p></div>
+<div class="z-i" id="g12-r1"><b class="sent">Dedico más tiempo, confianza y feedback a esa persona.</b><span>Piensa en lo que haces tú.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="1" data-k="0">Expectativa</button><button type="button" aria-pressed="false" data-i="1" data-k="1">Decisión</button><button type="button" aria-pressed="false" data-i="1" data-k="2">Resultado</button></div><p class="lect" id="g12-fb1"></p></div>
+<div class="z-i" id="g12-r2"><b class="sent">Mejora y confirma lo que yo esperaba.</b><span>Piensa en lo que ocurre al final.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="2" data-k="0">Expectativa</button><button type="button" aria-pressed="false" data-i="2" data-k="1">Decisión</button><button type="button" aria-pressed="false" data-i="2" data-k="2">Resultado</button></div><p class="lect" id="g12-fb2"></p></div>
+<div class="z-i" id="g12-r3"><b class="sent">Le doy menos confianza y menos ocasiones de destacar.</b><span>Piensa en lo que haces tú.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="3" data-k="0">Expectativa</button><button type="button" aria-pressed="false" data-i="3" data-k="1">Decisión</button><button type="button" aria-pressed="false" data-i="3" data-k="2">Resultado</button></div><p class="lect" id="g12-fb3"></p></div>
+<div class="z-i" id="g12-r4"><b class="sent">«Ya lo sabía.»</b><span>Piensa en lo que ocurre al final.</span><div class="ok2" style="grid-template-columns:repeat(3,minmax(0,1fr))"><button type="button" aria-pressed="false" data-i="4" data-k="0">Expectativa</button><button type="button" aria-pressed="false" data-i="4" data-k="1">Decisión</button><button type="button" aria-pressed="false" data-i="4" data-k="2">Resultado</button></div><p class="lect" id="g12-fb4"></p></div>
+</div>
+<p class="nota" style="margin-top:12px;color:var(--ink)">Para terminar, estas cuatro ideas: la primera impresión es un punto de partida y se puede revisar; la experiencia aporta mucho valor, y contrastar tus interpretaciones la hace más útil; conocer a cada persona ayuda a descubrir capacidades que tus expectativas pueden ocultar; y cambiar de opinión ante nuevas evidencias demuestra rigor profesional.</p>
+<div class="decir cso" style="margin-top:12px"><small>Error típico</small><p>Esperar a ver los resultados para saber si tenías razón. Los resultados también dependen de las oportunidades que diste.</p></div>
+</section>
+<section><h2 class="lab">Mini-práctica · 2 minutos</h2><p class="lead">Prepara tu ficha de decisión.</p><div class="qs">
+<div class="q"><label for="g12-a0"><span class="n">1</span>¿Qué decisión sobre una persona de tu equipo tomarás esta semana?</label><p class="h">Una real, sin nombres.</p><p class="eg">Ejemplo: «A quién propongo para acompañar a una persona nueva.»</p><textarea id="g12-a0" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g12-a1"><span class="n">2</span>¿Qué sabes con datos y qué estás suponiendo?</label><p class="h">Dos listas cortas.</p><p class="eg">Ejemplo: «Sé: sus resultados de seis meses. Supongo: que no tiene tiempo.»</p><textarea id="g12-a1" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+<div class="q"><label for="g12-a2"><span class="n">3</span>¿Qué dato te falta o quién te dará una segunda mirada?</label><p class="h">Una de las dos cosas.</p><p class="eg">Ejemplo: «Le preguntaré qué le interesa y se lo contaré a otro RE.»</p><textarea id="g12-a2" rows="3" placeholder="Escribe aquí tu respuesta"></textarea></div>
+</div><p class="save" id="g12-save"></p></section>
+</div><div class="col-b">
+<div class="accion"><h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /> <circle cx="12" cy="12" r="6" /> <circle cx="12" cy="12" r="2" /></svg>Esta semana</h2><p>Antes de la próxima decisión importante sobre una persona, rellena tu ficha: qué sé, qué supongo y qué me falta.</p><label class="chk" for="g12-hecho"><input type="checkbox" id="g12-hecho">Ya rellené mi ficha</label></div>
+<div class="rev"><b>Dentro de una semana</b>¿Cambió tu decisión? Anota qué suposición descubriste.</div><div class="frase">¿Qué sé… y qué estoy suponiendo?</div>
+</div></div>
+<nav class="navp" aria-label="Navegación entre píldoras"><a class="btn" href="#pildora-11"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 11</a><a class="btn next" href="#mi-kit">Mi ficha de decisión<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»<div class="reset" id="g12-reset"></div></footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<div id="view-mi-kit" class="view" hidden><main class="wrap"><a class="back" href="#inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Todas las píldoras</a>
+<h1 tabindex="-1" style="font-size:clamp(32px,9.6vw,54px)">Mi ficha<em>de decisión</em></h1><p class="sub">Tus cinco preguntas y tus compromisos, en una sola hoja</p><div class="gancho">Arriba tienes las chuletas de consulta. Debajo se rellenan tus respuestas; lo que falta aparece como pendiente, con un enlace a la píldora donde se completa. Solo la ves tú.</div>
+<div class="prog" style="position:static;margin:18px 0 0;padding:0;border:0"><div class="prog-in"><div class="prog-row"><span>Apartados completados</span><output id="plan-prog-txt">0 de 19</output></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="19" aria-valuenow="0" id="plan-pbar"><i id="plan-pbar-i"></i></div></div></div>
+<div id="plan-body"></div><div class="copia"><div class="acts"><button class="btn" type="button" id="plan-pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12" /> <path d="m7 10 5 5 5-5" /> <path d="M5 21h14" /></svg>Generar PDF de mi plan</button><a class="btn" id="plan-wa" href="https://wa.me/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.5 7.3L3 20.5l1.8-5.3A8.4 8.4 0 1 1 21 11.5Z" /></svg>Compartir por WhatsApp</a></div><p class="save" id="plan-msg" role="status"></p></div>
+<div class="rev"><b>La próxima vez</b>Revisa esta ficha antes de tu próxima decisión importante sobre una persona de tu equipo: qué sabes, qué supones y qué te falta.</div><div class="frase">¿Qué sé… y qué estoy suponiendo?</div>
+<nav class="navp" aria-label="Navegación"><a class="btn" href="#pildora-12"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /> <path d="M19 12H5" /></svg>Píldora 12</a><a class="btn" href="#inicio">Todas<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /> <path d="m12 5 7 7-7 7" /></svg></a></nav>
+<footer class="pie">Formación y Desarrollo · Serie «Sesgos inconscientes en tu equipo»</footer></main><div class="valores" role="note"><span><b>Compromiso ·</b> <b>Compañerismo ·</b> <b>Ambición por el progreso</b></span><span><b>Iniciativa y autonomía ·</b> <b>Afán de superación ·</b> <b>Orgullo</b></span></div></div>
+<script>
+(function(){
+  var KEY="wesser-serie-sesgos";
+  var GEN=[{"n": 1, "k": 4, "q": 2, "h": 1, "T": 7, "strict": false, "grp": null, "ans": [0, 1, 0, 1], "opt": [{}, {}, {}, {}], "fb": ["Sistema 1: rápido y automático.", "Sistema 2: lento y deliberado.", "Sistema 1: intuitivo. Útil para decidir deprisa, pero conviene comprobarlo.", "Sistema 2: más lento y más fiable para decidir sobre personas."]}, {"n": 2, "k": 4, "q": 2, "h": 1, "T": 7, "strict": false, "grp": null, "ans": [1, 0, 1, 0], "opt": [{}, {}, {}, {}], "fb": ["Falso: el cuaderno costaría 1,10 € y juntos sumarían 1,20 €.", "Cierto: 1,05 € + 0,05 € = 1,10 € y el cuaderno cuesta 1 € más.", "Falso: que una respuesta parezca evidente no significa que esté comprobada.", "Cierto: las impresiones sobre personas también se completan solas."]}, {"n": 3, "k": 4, "q": 2, "h": 1, "T": 7, "strict": false, "grp": null, "ans": [0, 1, 1, 0], "opt": [{}, {}, {}, {}], "fb": ["Dato: se puede comprobar.", "Interpretación: es una etiqueta sobre la persona, no una conducta.", "Interpretación: el historial condiciona lo nuevo.", "Dato: es un resultado. Falta el contexto: campaña, localización y acompañamiento."]}, {"n": 4, "k": 5, "q": 2, "h": 1, "T": 8, "strict": false, "grp": null, "ans": [null, null, null, null, null], "opt": [{"0": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?", "1": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?"}, {"0": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?", "1": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?"}, {"0": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?", "1": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?"}, {"0": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?", "1": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?"}, {"0": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?", "1": "Apunta el dato en el que te apoyas: ¿está en la tabla o solo en el comentario?"}], "fb": ["", "", "", "", ""]}, {"n": 5, "k": 5, "q": 2, "h": 1, "T": 8, "strict": false, "grp": null, "ans": [null, null, null, null, null], "opt": [{"0": "Revisa: el comentario decía que no hacía falta estar encima, pero lleva tres meses por debajo de su nivel. Dar por hecho que no necesita apoyo era una suposición.", "1": "Es un cambio con base en un dato: lo que parecía «un regalo» necesita una conversación. La confianza previa pudo ocultar la bajada."}, {"0": "Tiene base si le acompañas: su mejora existe y baja cuando trabaja solo. Si no le acompañabas, ¿qué dato lo justificaba?", "1": "Es razonable si el dato te lo pide: el acompañamiento le sirve y la calidad aún se está consolidando."}, {"0": "Puede que el reparto sea el mismo; lo que cambia es la conversación que tienes pendiente con ella sobre crecer. Preguntar es mejor que suponer.", "1": "Si la dejaste fuera por «va haciendo», el dato nuevo muestra potencial sin explorar. Pregúntale qué necesita."}, {"0": "Revisa: «falta de ambición» era una explicación, no un dato. Con el contexto, su 22 no la demuestra.", "1": "Con el contexto, su resultado deja de ser prueba de falta de ambición. Separa el hecho de la causa que suponías."}, {"0": "Tiene base si la dejaste fuera por ser fiable y estar bien. Pero ahora sabes algo que el comentario no recogía: quiere crecer.", "1": "Sus horarios no han afectado a nada y le interesa crecer: ese dato no estaba en el comentario del anterior RE."}], "fb": ["", "", "", "", ""]}, {"n": 6, "k": 4, "q": 2, "h": 1, "T": 7, "strict": true, "grp": null, "ans": [0, 0, 0, 1], "opt": [{}, {}, {}, {}], "fb": ["Metasesgo: la confianza en conocer a alguien sustituye a revisar los datos.", "Metasesgo: se rechaza la segunda mirada por exceso de confianza.", "Metasesgo: la experiencia se usa en lugar de las conductas observables.", "Decisión contrastada: revisa hechos y pide una segunda mirada."]}, {"n": 7, "k": 5, "q": 2, "h": 1, "T": 8, "strict": true, "grp": null, "ans": [0, 0, 0, 1, 1], "opt": [{}, {}, {}, {}, {}], "fb": ["Simpatía: el agrado decide cuánto tiempo se dedica a cada uno.", "Simpatía: el mismo hecho recibe una explicación más benévola con quien cae mejor.", "Simpatía: el agrado ocupa el lugar de las evidencias.", "Sin sesgo visible: criterio común y evidencias anotadas.", "Sin sesgo visible: mismo hecho, misma respuesta."]}, {"n": 8, "k": 5, "q": 2, "h": 1, "T": 8, "strict": true, "grp": null, "ans": [0, 0, 0, 1, 1], "opt": [{}, {}, {}, {}, {}], "fb": ["Rendimiento: el mismo dato se disculpa en uno y confirma una impresión en el otro.", "Rendimiento: la misma corrección se exige más a quien se espera más.", "Rendimiento: un único resultado reciente pesa más que toda su serie.", "Sin sesgo visible: mismo criterio y mismo contexto para ambos.", "Sin sesgo visible: mira la serie y habla con la persona."]}, {"n": 9, "k": 5, "q": 2, "h": 1, "T": 8, "strict": true, "grp": null, "ans": [0, 0, 0, 1, 2], "opt": [{}, {}, {}, {}, {}], "fb": ["Atribución: se explica el dato por la persona sin revisar el contexto.", "Atribución: se supone una causa personal sin preguntar.", "Atribución: se atribuye todo a la persona y se ignora el contexto que ayudó.", "Rendimiento: aquí lo que cambia es la expectativa sobre cada persona, no la causa que se atribuye.", "Sin sesgo visible: separa el dato de la explicación y comprueba el contexto."]}, {"n": 10, "k": 5, "q": 2, "h": 1, "T": 8, "strict": true, "grp": null, "ans": [0, 0, 0, 1, 2], "opt": [{}, {}, {}, {}, {}], "fb": ["Afinidad: el estilo propio se convierte en la referencia.", "Afinidad: se prefiere lo familiar aunque otra técnica funcione.", "Afinidad: la semejanza con uno mismo pesa más que comparar competencias.", "Simpatía: pesa lo agradable del trato, no que se parezca a ti.", "Sin sesgo visible: criterio por conductas, no por estilo."]}, {"n": 11, "k": 5, "q": 2, "h": 1, "T": 8, "strict": true, "grp": null, "ans": [0, 0, 0, 1, 1], "opt": [{}, {}, {}, {}, {}], "fb": ["Sesgo: se supone una limitación que Sara no ha declarado.", "Sesgo: la protección bienintencionada limita la oportunidad sin preguntar.", "Sesgo: se supone menor compromiso por sus responsabilidades de cuidado.", "Sin sesgo visible: preguntas equivalentes y respuesta respetada.", "Sin sesgo: una limitación declarada es un dato distinto de una limitación supuesta."]}, {"n": 12, "k": 5, "q": 3, "h": 1, "T": 9, "strict": true, "grp": null, "ans": [0, 1, 2, 1, 2], "opt": [{}, {}, {}, {}, {}], "fb": ["Expectativa: un juicio previo.", "Decisión: lo que haces a partir de la expectativa.", "Resultado: confirma la expectativa, también por las oportunidades que diste.", "Decisión: la misma pieza, pero hacia el lado contrario.", "Resultado: la evolución confirma la expectativa sin comprobar si las oportunidades fueron iguales."]}];
+  var PLAN=[["Mi caso: heredo un equipo", [["Mi reparto de turnos y por qué", 4, 0], ["Qué tendría que pasar para asignar la reserva", 4, 1], ["Qué decisión he cambiado y por qué dato", 5, 0], ["Qué comentario era una interpretación", 5, 1]]], ["Mis sesgos", [["Metasesgo: dónde puede actuar", 6, 0], ["Metasesgo: mi comprobación", 6, 1], ["Simpatía: dónde puede actuar", 7, 0], ["Simpatía: mi criterio común", 7, 1], ["Rendimiento: dónde puede actuar", 8, 0], ["Rendimiento: lo que definiré antes", 8, 1], ["Atribución: dónde puede actuar", 9, 0], ["Atribución: lo que preguntaré", 9, 1], ["Afinidad: dónde puede actuar", 10, 0], ["Afinidad: lo que comprobaré", 10, 1], ["Maternidad o paternidad: dónde puede actuar", 11, 0], ["Maternidad o paternidad: lo que preguntaré", 11, 1]]], ["Mi decisión de esta semana", [["La decisión sobre una persona", 12, 0], ["Lo que sé y lo que supongo", 12, 1], ["El dato que me falta o la segunda mirada", 12, 2]]]];
+  var CHULETA=[["Antes de decidir sobre una persona", [["¿Qué sé?", "Hechos que otra persona también podría ver o comprobar."], ["¿Qué estoy suponiendo?", "Explicaciones, etiquetas o expectativas que no he comprobado."], ["¿Qué dato me falta?", "Contexto: campaña, localización, acompañamiento recibido, serie de meses."], ["¿Qué criterio común aplico?", "Lo que espero del puesto, igual para todas las personas."], ["¿Quién me da una segunda mirada?", "Alguien que revise los hechos, también cuando estoy muy seguro."]]], ["Seis sesgos de un vistazo", [["Metasesgo", "Creo que mis valoraciones son más objetivas que las de otros. Reducirlo: revisar qué hechos sostienen la decisión y pedir una segunda mirada."], ["Simpatía", "Valoro mejor a quien me resulta agradable. Reducirlo: valorar las mismas conductas con criterios comunes."], ["Rendimiento", "El mismo resultado se valora distinto según lo que esperaba de cada persona. Reducirlo: definir antes qué espero del puesto y mirar series y contexto."], ["Atribución", "Explico un dato por cómo es la persona y no por sus circunstancias. Reducirlo: separar el hecho de la explicación y preguntar."], ["Afinidad", "Favorezco a quien se parece a mí o trabaja como yo. Reducirlo: definir qué conductas requiere el puesto y comprobarlas en estilos distintos."], ["Maternidad o paternidad", "Supongo disponibilidad o compromiso por las responsabilidades de cuidado. Reducirlo: explicar los requisitos y preguntar igual a todas las personas."]]], ["Cuatro decisiones donde aparecen", [["Acompañamiento", "¿A quién dedico más tiempo y por qué?"], ["Feedback", "¿Qué traslado al RP sobre cada persona y con qué hechos?"], ["Resultados", "¿Qué explicación doy a un buen o a un mal dato?"], ["Crecimiento", "¿A quién animo a asumir más responsabilidad y a quién no se lo he preguntado?"]]]];
+  var MISLAB="Lo que has escrito";
+  var PLAN_TOTAL=19;
+  var VIEWS={"inicio": ["SERIE", "Sesgos inconscientes en tu equipo", "3-4 min cada una"], "mi-kit": ["MI FICHA", "Sesgos inconscientes en tu equipo", "Solo para ti"], "pildora-1": ["PÍLDORA 01", "Cómo decidimos", "3-4 min"], "pildora-2": ["PÍLDORA 02", "Cómo decidimos", "3-4 min"], "pildora-3": ["PÍLDORA 03", "Cómo decidimos", "3-4 min"], "pildora-4": ["PÍLDORA 04", "Un caso: heredas un equipo", "3-4 min"], "pildora-5": ["PÍLDORA 05", "Un caso: heredas un equipo", "3-4 min"], "pildora-6": ["PÍLDORA 06", "Seis sesgos", "3-4 min"], "pildora-7": ["PÍLDORA 07", "Seis sesgos", "3-4 min"], "pildora-8": ["PÍLDORA 08", "Seis sesgos", "3-4 min"], "pildora-9": ["PÍLDORA 09", "Seis sesgos", "3-4 min"], "pildora-10": ["PÍLDORA 10", "Seis sesgos", "3-4 min"], "pildora-11": ["PÍLDORA 11", "Seis sesgos", "3-4 min"], "pildora-12": ["PÍLDORA 12", "Para terminar", "3-4 min"]};
+  var S={};
+  function $(id){return document.getElementById(id);}
+  function fg(g){var r=[],a=[],i;for(i=0;i<g.k;i++)r.push(null);for(i=0;i<g.q;i++)a.push('');return {r:r,a:a,hecho:false};}
+  var storageOk=true;
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(raw){var s0=JSON.parse(raw);
+      GEN.forEach(function(g){var v=s0&&s0['g'+g.n];if(v&&v.r&&v.r.length===g.k&&v.a&&v.a.length===g.q)S['g'+g.n]=v;});}
+  }catch(e){storageOk=false;}
+  GEN.forEach(function(g){if(!S['g'+g.n])S['g'+g.n]=fg(g);});
+  function persist(){try{localStorage.setItem(KEY,JSON.stringify(S));return true;}catch(e){storageOk=false;return false;}}
+  var msgNo='Tus respuestas no se guardan en este navegador. Cópialas si las quieres conservar.';
+  var msgOk='Guardado en este dispositivo. Solo lo ves tú.';
+  function filled(arr){return arr.filter(function(x){return x.trim().length>0;}).length;}
+  function countG(g){var st=S['g'+g.n],m=0;for(var i=0;i<g.k;i++){if(st.r[i]!==null)m++;}return m+filled(st.a)+(st.hecho?1:0);}
+  function tx(v){return (v||'').trim();}
+  function planDone(){var n=0;PLAN.forEach(function(g){g[1].forEach(function(r){if(tx(S['g'+r[1]].a[r[2]]))n++;});});return n;}
+  function setBar(pre,n,t){
+    $(pre+'-prog-txt').textContent=n+' de '+t;
+    $(pre+'-bar-i').style.width=(n/t*100)+'%';
+    $(pre+'-bar').setAttribute('aria-valuenow',n);
+  }
+  function renderIndex(){
+    GEN.forEach(function(g){
+      var c=countG(g);
+      $('idx-'+g.n+'-n').textContent=c+' de '+g.T;
+      $('idx-'+g.n+'-bar').style.width=(c/g.T*100)+'%';
+      $('idx-'+g.n+'-txt').textContent=c===0?'Sin empezar':(c>=g.T?'Completada':'En curso');
+    });
+    var pn=planDone();
+    $('plan-n').textContent=pn+' de '+PLAN_TOTAL+' apartados';
+    $('plan-bar').style.width=(pn/PLAN_TOTAL*100)+'%';
+  }
+  var msgs={
+    ok:'Coincide. ',
+    ko:'Otra opción también es defendible si sabes por qué. '
+  };
+  var GR={};
+  GEN.forEach(function(g){
+    var n=g.n,pre='g'+n,as=[];
+    for(var j=0;j<g.q;j++)as.push($(pre+'-a'+j));
+    function render(){
+      var st=S[pre];
+      for(var i=0;i<g.k;i++){
+        var bs=$(pre+'-r'+i).querySelectorAll('button');
+        for(var k=0;k<bs.length;k++){bs[k].setAttribute('aria-pressed',st.r[i]===+bs[k].getAttribute('data-k')?'true':'false');}
+        var fb=$(pre+'-fb'+i);
+        if(fb){
+          if(st.r[i]===null){fb.textContent='';}
+          else if(g.ans[i]===null){fb.textContent=(g.opt&&g.opt[i]&&g.opt[i][st.r[i]])||'';}
+          else fb.textContent=(st.r[i]===g.ans[i]?msgs.ok:(g.strict?'Revisa: ':msgs.ko))+g.fb[i];
+        }
+      }
+      if(g.grp){
+        var box=$(pre+'-res');
+        if(box){
+          var p=box.querySelector('p'),tot=0,ans=0,best=-1,bi=0,parts=[];
+          g.grp.forEach(function(gr,gi){
+            var c=0;
+            gr.i.forEach(function(ix){if(st.r[ix]!==null)ans++;if(st.r[ix]===0)c++;});
+            tot+=c;parts.push(gr.n+' '+c+' de '+gr.i.length);
+            var ratio=c/gr.i.length;if(ratio>best){best=ratio;bi=gi;}
+          });
+          if(ans<g.k){p.textContent=ans===0?'Marca los síntomas para ver tu resultado.':'Llevas '+ans+' de '+g.k+'. Sigue marcando para ver tu resultado.';}
+          else if(tot===0){p.textContent='No has marcado ningún síntoma. Puedes seguir las píldoras en el orden normal.';}
+          else{p.innerHTML=parts.join(' · ')+'. Lo que más pesa: '+g.grp[bi].n.toLowerCase()+'. '+g.grp[bi].r;}
+        }
+      }
+      setBar(pre,countG(g),g.T);
+    }
+    GR[n]=render;
+    Array.prototype.forEach.call(document.querySelectorAll('#view-pildora-'+n+' .zs button'),function(b){
+      b.addEventListener('click',function(){
+        var i=+b.getAttribute('data-i'),k=+b.getAttribute('data-k');
+        S[pre].r[i]=S[pre].r[i]===k?null:k;render();renderIndex();persist();
+      });
+    });
+    var tm=null;
+    as.forEach(function(el,j){
+      el.value=S[pre].a[j]||'';
+      el.addEventListener('input',function(){
+        S[pre].a[j]=el.value;render();renderIndex();
+        clearTimeout(tm);tm=setTimeout(function(){$(pre+'-save').textContent=persist()?msgOk:msgNo;},500);
+      });
+    });
+    var hb=$(pre+'-hecho');
+    if(hb){hb.checked=!!S[pre].hecho;hb.addEventListener('change',function(){S[pre].hecho=this.checked;render();renderIndex();persist();});}
+    if(!storageOk)$(pre+'-save').textContent=msgNo;
+    var box=$(pre+'-reset');
+    function show(){
+      box.innerHTML='<button class="btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /> <path d="M3 3v5h5" /></svg>Empezar esta píldora de nuevo</button>';
+      box.querySelector('button').addEventListener('click',conf);
+    }
+    function conf(){
+      box.innerHTML='<span>¿Borrar tus respuestas de esta píldora?</span><button class="btn danger" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 11v6" /> <path d="M14 11v6" /> <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /> <path d="M3 6h18" /> <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>Sí, borrar</button><button class="btn" type="button">Cancelar</button>';
+      var bs=box.querySelectorAll('button');
+      bs[0].addEventListener('click',function(){
+        S[pre]=fg(g);as.forEach(function(el){el.value='';});if(hb)hb.checked=false;
+        $(pre+'-save').textContent='Respuestas borradas.';persist();render();renderIndex();show();
+      });
+      bs[1].addEventListener('click',show);
+    }
+    show();render();
+  });
+
+  /* hoja final */
+  function planText(){
+    var out=["Mi ficha de decisión · Sesgos inconscientes en tu equipo"+' · Serie «'+"Sesgos inconscientes en tu equipo"+'»',''];
+    CHULETA.forEach(function(g){out.push(g[0]);g[1].forEach(function(r){out.push('- '+r[0]+': '+r[1]);});out.push('');});
+    if(CHULETA.length&&planDone()>0){out.push(MISLAB.toUpperCase());out.push('');}
+    PLAN.forEach(function(g){
+      var l=[];
+      g[1].forEach(function(r){var v=tx(S['g'+r[1]].a[r[2]]);if(v)l.push('- '+r[0]+': '+v);});
+      if(l.length){out.push(g[0]);out=out.concat(l);out.push('');}
+    });
+    return out.join('\n').trim();
+  }
+  function pad(n){return ('0'+n).slice(-2);}
+  function renderPlan(){
+    var box=$('plan-body');box.innerHTML='';
+    CHULETA.forEach(function(g){
+      var sec=document.createElement('section');sec.className='pg';
+      var h=document.createElement('h2');h.className='lab';h.textContent=g[0];sec.appendChild(h);
+      g[1].forEach(function(r){
+        var d=document.createElement('div');d.className='pr';
+        var sm=document.createElement('small'),sp=document.createElement('span');sp.textContent=r[0];sm.appendChild(sp);d.appendChild(sm);
+        var p=document.createElement('p');p.textContent=r[1];d.appendChild(p);sec.appendChild(d);
+      });
+      box.appendChild(sec);
+    });
+    if(CHULETA.length){var hh=document.createElement('h2');hh.className='lab';hh.style.marginTop='28px';hh.textContent=MISLAB;box.appendChild(hh);}
+    PLAN.forEach(function(g){
+      var sec=document.createElement('section');sec.className='pg';
+      var h=document.createElement('h2');h.className='lab';h.textContent=g[0];sec.appendChild(h);
+      g[1].forEach(function(r){
+        var v=tx(S['g'+r[1]].a[r[2]]),d=document.createElement('div');d.className='pr'+(v?'':' vacio');
+        var sm=document.createElement('small'),sp=document.createElement('span');sp.textContent=r[0];
+        var a=document.createElement('a');a.href='#pildora-'+r[1];a.textContent=(v?'Editar · ':'')+'Píldora '+pad(r[1]);
+        sm.appendChild(sp);sm.appendChild(a);d.appendChild(sm);
+        var p=document.createElement('p');
+        if(v){p.textContent=v;}
+        else{p.appendChild(document.createTextNode('Pendiente. '));var l=document.createElement('a');l.href='#pildora-'+r[1];l.textContent='Complétalo en la píldora '+pad(r[1]);p.appendChild(l);}
+        d.appendChild(p);sec.appendChild(d);
+      });
+      box.appendChild(sec);
+    });
+    var n=planDone();
+    $('plan-prog-txt').textContent=n+' de '+PLAN_TOTAL;
+    $('plan-pbar-i').style.width=(n/PLAN_TOTAL*100)+'%';
+    $('plan-pbar').setAttribute('aria-valuenow',n);
+    updateWa();
+  }
+  /* ---- Generar PDF y compartir por WhatsApp ---- */
+  function planHasContent(){return planDone()>0;}
+  function pdfEnc(s){
+    var M={'€':128,'‚':130,'„':132,'…':133,'‘':145,'’':146,'“':147,'”':148,'•':149,'–':150,'—':151,'™':153},o='',i,c,ch;
+    s=String(s).normalize('NFC');
+    for(i=0;i<s.length;i++){ch=s.charAt(i);c=s.charCodeAt(i);
+      if(M[ch])c=M[ch];else if(c>255||(c>126&&c<160))c=(ch===' '?32:63);
+      if(c===92||c===40||c===41)o+='\\';
+      o+=String.fromCharCode(c);}
+    return o;
+  }
+  function pdfBuild(){
+    var W=595,H=842,MX=48,TOP=70,BOT=60,cv=document.createElement('canvas').getContext('2d');
+    var RED='0.702 0.059 0.078',INK='0.082 0.075 0.075',MUT='0.357 0.333 0.318',LINE='0.867 0.843 0.812';
+    var pages=[],cur=null,y=0;
+    function np(){cur=[];pages.push(cur);cur.push('0.898 0.106 0.106 rg 0 '+(H-10)+' '+W+' 10 re f');y=H-TOP;}
+    function wid(s,bold,size){cv.font=(bold?'bold ':'')+'100px Arial, Helvetica, sans-serif';return cv.measureText(s).width*size/100;}
+    function wrap(t,bold,size,maxW){
+      var out=[];String(t).split('\n').forEach(function(p){
+        var words=p.split(/\s+/).filter(Boolean),ln='';
+        if(!words.length){out.push('');return;}
+        words.forEach(function(w){
+          var tr=ln?ln+' '+w:w;
+          if(wid(tr,bold,size)<=maxW||!ln){ln=tr;}else{out.push(ln);ln=w;}
+        });
+        out.push(ln);});
+      return out;
+    }
+    function txt(x,yy,f,size,col,s){cur.push('BT /'+f+' '+size+' Tf '+col+' rg '+x+' '+yy.toFixed(1)+' Td ('+pdfEnc(s)+') Tj ET');}
+    function need(h){if(y-h<BOT)np();}
+    np();
+    /* logo */
+    var img=document.querySelector('.logo img'),logo=null,lh=0,lw=0;
+    try{
+      if(img&&img.naturalWidth){
+        var c=document.createElement('canvas');c.width=img.naturalWidth;c.height=img.naturalHeight;
+        var g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(img,0,0);
+        var b64=c.toDataURL('image/jpeg',0.92).split(',')[1],bin=atob(b64);
+        lh=40;lw=lh*c.width/c.height;logo={w:c.width,h:c.height,data:bin};
+      }
+    }catch(e){logo=null;}
+    var serie=(VIEWS.inicio&&VIEWS.inicio[1])||'',head=planText().split('\n')[0].split(' · ')[0];
+    if(logo){cur.push('q '+lw.toFixed(1)+' 0 0 '+lh+' '+MX+' '+(y-lh+14)+' cm /Im1 Do Q');y-=lh+8;}
+    y-=14;txt(MX,y,'F2',22,RED,head);
+    y-=18;txt(MX,y,'F1',10.5,MUT,'Serie «'+serie+'» · '+new Date().toLocaleDateString('es-ES'));
+    y-=14;cur.push(LINE+' RG 1 w '+MX+' '+y+' m '+(W-MX)+' '+y+' l S');y-=24;
+    var SECS=CHULETA.map(function(g){return [g[0],g[1].map(function(r){return [r[0],r[1],true];})];}).concat(PLAN.map(function(g){return [g[0],g[1].map(function(r){return [r[0],tx(S['g'+r[1]].a[r[2]]),false];})];}));
+    SECS.forEach(function(g){
+      need(70);
+      txt(MX,y,'F2',13,RED,g[0].toUpperCase());y-=7;
+      cur.push(LINE+' RG 0.8 w '+MX+' '+y+' m '+(W-MX)+' '+y+' l S');y-=18;
+      g[1].forEach(function(r){
+        var v=r[1],lab=wrap(r[0],true,10,W-2*MX),val=v?wrap(v,false,11,W-2*MX):['Pendiente'];
+        need((lab.length*13)+(val.length*15)+14);
+        lab.forEach(function(l){txt(MX,y,'F2',10,MUT,l);y-=13;});
+        val.forEach(function(l){txt(MX,y,v?'F1':'F3',11,v?INK:MUT,l);y-=15;});
+        y-=9;
+      });
+      y-=8;
+    });
+    var n=pages.length;
+    pages.forEach(function(p,i){
+      cur=p;
+      cur.push(LINE+' RG 0.8 w '+MX+' 44 m '+(W-MX)+' 44 l S');
+      txt(MX,30,'F1',8,MUT,'Formación y Desarrollo · Serie «'+serie+'»');
+      var pg='Página '+(i+1)+' de '+n;txt(W-MX-wid(pg,false,8),30,'F1',8,MUT,pg);
+    });
+    /* objetos */
+    var objs=[],k;
+    objs[1]='<< /Type /Catalog /Pages 2 0 R >>';
+    objs[3]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>';
+    objs[4]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>';
+    objs[5]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding >>';
+    var next=6,imgNo=0;
+    if(logo){imgNo=next++;objs[imgNo]='<< /Type /XObject /Subtype /Image /Width '+logo.w+' /Height '+logo.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+logo.data.length+' >>\nstream\n'+logo.data+'\nendstream';}
+    var kids=[];
+    pages.forEach(function(p){
+      var pn=next++,cn=next++,body=p.join('\n');
+      kids.push(pn+' 0 R');
+      objs[pn]='<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W+' '+H+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >>'+(imgNo?' /XObject << /Im1 '+imgNo+' 0 R >>':'')+' >> /Contents '+cn+' 0 R >>';
+      objs[cn]='<< /Length '+body.length+' >>\nstream\n'+body+'\nendstream';
+    });
+    objs[2]='<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+n+' >>';
+    var out='%PDF-1.4\n',offs=[];
+    for(k=1;k<next;k++){offs[k]=out.length;out+=k+' 0 obj\n'+objs[k]+'\nendobj\n';}
+    var xr=out.length;
+    out+='xref\n0 '+next+'\n0000000000 65535 f \n';
+    for(k=1;k<next;k++){out+=('0000000000'+offs[k]).slice(-10)+' 00000 n \n';}
+    out+='trailer\n<< /Size '+next+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF';
+    var u=new Uint8Array(out.length);for(k=0;k<out.length;k++)u[k]=out.charCodeAt(k)&255;
+    return new Blob([u],{type:'application/pdf'});
+  }
+  var pdfUrl=null;
+  $('plan-pdf').addEventListener('click',function(){
+    var msg=$('plan-msg');
+    if(!planHasContent()){msg.textContent='Todavía no hay nada que incluir: completa alguna píldora.';return;}
+    try{
+      var blob=pdfBuild(),name=((VIEWS.inicio&&VIEWS.inicio[1])||'plan').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'-mi-plan.pdf';
+      if(pdfUrl)try{URL.revokeObjectURL(pdfUrl);}catch(e){}
+      pdfUrl=URL.createObjectURL(blob);
+      var a=document.createElement('a');a.href=pdfUrl;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);
+      msg.innerHTML='';msg.appendChild(document.createTextNode('PDF generado ('+name+'). Si no se ha descargado, '));
+      var l=document.createElement('a');l.href=pdfUrl;l.target='_blank';l.rel='noopener';l.textContent='ábrelo aquí';msg.appendChild(l);msg.appendChild(document.createTextNode('.'));
+    }catch(e){msg.textContent='No se ha podido generar el PDF en este dispositivo. Usa «Compartir por WhatsApp» para enviarte el texto.';}
+  });
+  function waText(){
+    var t=planText()+'\n\nFormación y Desarrollo · Wesser';
+    if(t.length>3500)t=t.slice(0,3500).replace(/\s+\S*$/,'')+'…';
+    return t;
+  }
+  function updateWa(){var a=$('plan-wa');if(a)a.href=planHasContent()?'https://wa.me/?text='+encodeURIComponent(waText()):'https://wa.me/';}
+  $('plan-wa').addEventListener('click',function(e){
+    if(!planHasContent()){e.preventDefault();$('plan-msg').textContent='Todavía no hay nada que compartir: completa alguna píldora.';return;}
+    updateWa();$('plan-msg').textContent='Se abrirá WhatsApp con tu plan en texto. Elige a quién enviarlo.';
+  });
+
+  /* rutas por hash */
+  function route(focus){
+    var h=(location.hash||'').replace('#','');
+    if(!VIEWS[h])h='inicio';
+    Object.keys(VIEWS).forEach(function(k){$('view-'+k).hidden=(k!==h);});
+    $('tag-b').textContent=VIEWS[h][0];$('tag-a').textContent=VIEWS[h][1];$('tag-s').textContent=VIEWS[h][2];
+    if(h==='mi-kit')renderPlan();
+    window.scrollTo(0,0);
+    if(focus){var t=$('view-'+h).querySelector('h1');if(t)t.focus({preventScroll:true});}
+  }
+  window.addEventListener('hashchange',function(){route(true);});
+  renderIndex();route(false);
+})();
+</script>
+<script>(function(){var KEY='wesser-serie-sesgos';var N=['Laura','Dani','Sara','Marcos','Ana'];
+function st(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){return {};}}
+function upd(){var s=st(),a=(s.g4&&s.g4.r)||[],b=(s.g5&&s.g5.r)||[],c=document.getElementById('cv-cnt'),r=document.getElementById('cv-res');
+ if(c){var u=0,i;for(i=0;i<5;i++){if(a[i]===0)u++;}
+  c.setAttribute('data-over',u>4?'1':'0');
+  c.textContent=u>4?'Has marcado '+u+' acompañamientos y solo tienes 4 turnos. Deja a alguien fuera o en reserva.':'Turnos asignados: '+u+' de 4. '+(u<4?'Quedan '+(4-u)+' en reserva.':'No queda ninguno en reserva.');}
+ if(r){var p=r.querySelector('p'),ac=[],ch=[],ans=0,i;
+  for(i=0;i<5;i++){if(a[i]===0)ac.push(N[i]);if(b[i]!==null&&b[i]!==undefined)ans++;if(b[i]===1)ch.push(N[i]);}
+  var first=a.filter(function(x){return x===0||x===1;}).length;
+  if(first<1){p.textContent='Primero reparte los turnos en la píldora 4: marca a quién acompañas.';}
+  else if(ans<5){p.textContent='Tu primer reparto: acompañabas a '+(ac.join(', ')||'nadie')+'. Marca ahora si mantienes o cambias cada decisión.';}
+  else if(ch.length===0){p.textContent='Tu primer reparto: acompañabas a '+(ac.join(', ')||'nadie')+'. No has cambiado ninguna decisión. Pregúntate qué información te habría hecho cambiar y si la habrías pedido antes de decidir.';}
+  else{p.textContent='Tu primer reparto: acompañabas a '+(ac.join(', ')||'nadie')+'. Has cambiado '+ch.length+' de 5 decisiones ('+ch.join(', ')+') al conocer más. Cada cambio señala algo que dabas por cierto y era una interpretación, no un dato.';}}}
+document.addEventListener('click',function(ev){if(ev.target.closest&&ev.target.closest('.zs button'))setTimeout(upd,30);});
+window.addEventListener('hashchange',function(){setTimeout(upd,30);});setTimeout(upd,60);})();</script>
+
+<style id="serie-ico">.serie-ico{width:52px;height:52px;border-radius:var(--r,8px);background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;margin:22px 0 14px}</style><style id="pasos-css">
+.pasos,.pasos-nav{display:none}
+html.con-pasos .pasos{display:block;margin-top:14px}
+.pasos-t{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:14px;font-weight:700;color:var(--muted)}
+.pasos-t b{color:var(--ink);font-family:var(--f-display);font-weight:800;font-size:20px;letter-spacing:.6px;text-transform:uppercase}
+.pasos-t span{text-align:right;min-width:0}
+.pasos-d{display:flex;gap:6px;margin-top:8px}
+.pasos-d i{flex:1;height:6px;border-radius:3px;background:var(--soft,#eee)}
+.pasos-d i.on{background:var(--red)}
+html.con-pasos .pasos-nav{display:flex;gap:10px;position:sticky;bottom:0;z-index:9;margin:18px calc(-1 * max(16px,env(safe-area-inset-left,0px))) 0;padding:12px max(16px,env(safe-area-inset-left,0px)) calc(12px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line)}
+.pasos-nav .btn{flex:1;justify-content:center;min-height:48px}
+.pasos-nav .btn.next{background:var(--red);border-color:var(--red);color:#fff}
+.pasos-nav .btn[hidden]{display:none!important}
+.cierre{display:none}
+html.con-pasos .cierre{display:block;margin-top:22px;border:2px solid var(--red);border-radius:var(--r,8px);padding:22px 18px;background:var(--surface);text-align:center}
+.cierre:focus{outline:none}
+.cierre .ci{width:60px;height:60px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.cierre h2{margin:0;font-family:var(--f-display);font-weight:800;font-size:32px;line-height:1;letter-spacing:.5px;text-transform:uppercase}
+.cierre .cl{margin:14px 0 0;font-size:14px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--red-text)}
+.cierre .ca{margin:6px 0 0;padding:12px 14px;background:var(--soft,#eee);border-radius:var(--r,8px);font-weight:700;font-size:17px;line-height:1.4;text-align:left}
+.cierre .cr{margin:12px 0 0;font-size:15px;font-weight:600;color:var(--muted)}
+.cierre .cb{display:grid;gap:10px;margin-top:18px}
+.cierre .btn{min-height:48px;justify-content:center;text-decoration:none}
+.cierre .btn.next{background:var(--red);border-color:var(--red);color:#fff}
+html.con-pasos .pasos-fuera{display:none!important}
+</style>
+<script id="pasos-js">
+(function(){
+  var mq=window.matchMedia('(max-width:759px)'),root=document.documentElement,cur={};
+  function views(){return Array.prototype.slice.call(document.querySelectorAll('[id^="view-pildora-"]'));}
+  function build(v){
+    if(v.__p!==undefined)return v.__p;
+    var main=v.querySelector('main.wrap'),cols=v.querySelector('.cols'),h1=main&&main.querySelector('h1');
+    v.__p=null;
+    if(!main||!cols||!h1)return null;
+    var secs=Array.prototype.slice.call(cols.querySelectorAll(':scope > .col-a > section')),colB=cols.querySelector(':scope > .col-b');
+    if(secs.length<2||!colB)return null;
+    var g=main.querySelector(':scope > .gancho'),groups=[],labels=[];
+    groups.push([g,secs[0]].filter(Boolean));labels.push('La idea clave');
+    for(var i=1;i<secs.length;i++){groups.push([secs[i]]);var h2=secs[i].querySelector('h2');labels.push(h2?h2.textContent.replace(/\s*·.*$/,''):'Parte '+(i+1));}
+    groups.push([colB]);labels.push(colB.querySelector('.accion')?'Esta semana':'Para recordar');
+    var R=groups.length;
+    var navp=main.querySelector(':scope > .navp'),nextA=navp&&navp.querySelector('a.next'),accP=colB.querySelector('.accion p');
+    var num=(v.id.match(/\d+/)||[''])[0],esUlt=!!(nextA&&/#mi-kit/.test(nextA.getAttribute('href')||''));
+    var c=document.createElement('section');c.className='cierre';c.setAttribute('tabindex','-1');
+    var ci=document.createElement('div');ci.className='ci';ci.innerHTML='<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+    var h=document.createElement('h2');h.textContent=esUlt?'Has terminado la serie':'Píldora '+num+' terminada';
+    c.appendChild(ci);c.appendChild(h);
+    if(accP){
+      var l=document.createElement('p');l.className='cl';l.textContent='Tu acción de esta semana';
+      var q=document.createElement('p');q.className='ca';q.textContent=accP.textContent;
+      var r=document.createElement('p');r.className='cr';r.textContent='Dentro de una semana, revisa cómo te ha ido.';
+      c.appendChild(l);c.appendChild(q);c.appendChild(r);
+    }else{
+      var fr=colB.querySelector('.frase');
+      if(fr){var l2=document.createElement('p');l2.className='cl';l2.textContent='Para recordar';
+        var q2=document.createElement('p');q2.className='ca';q2.textContent=fr.textContent;
+        c.appendChild(l2);c.appendChild(q2);}
+    }
+    var cb=document.createElement('div');cb.className='cb';
+    if(nextA){var a1=document.createElement('a');a1.className='btn next';a1.href=nextA.getAttribute('href');a1.textContent=esUlt?'Abrir mi plan':'Siguiente píldora';cb.appendChild(a1);}
+    var a2=document.createElement('a');a2.className='btn';a2.href='#inicio';a2.textContent='Todas las píldoras';cb.appendChild(a2);
+    c.appendChild(cb);
+    var anchor0=navp||main.querySelector(':scope > .pie');
+    main.insertBefore(c,anchor0);
+    groups.push([c]);labels.push('');
+    var tail=[main.querySelector(':scope > .pie'),v.querySelector(':scope > .valores')].filter(Boolean);
+    var box=document.createElement('div');box.className='pasos';box.setAttribute('role','group');box.setAttribute('aria-label','Pasos de la píldora');
+    var dots='';for(var k=0;k<R;k++)dots+='<i></i>';
+    box.innerHTML='<div class="pasos-t"><b></b><span></span></div><div class="pasos-d" aria-hidden="true">'+dots+'</div>';
+    h1.parentNode.insertBefore(box,h1.nextSibling);
+    var nav=document.createElement('div');nav.className='pasos-nav';
+    nav.innerHTML='<button type="button" class="btn" data-d="-1">Atrás</button><button type="button" class="btn next" data-d="1">Siguiente</button>';
+    var anchor=navp||main.querySelector(':scope > .pie');
+    main.insertBefore(nav,anchor);
+    nav.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;go(v,(cur[v.id]||0)+(+b.getAttribute('data-d')));});
+    v.__p={groups:groups,labels:labels,tail:tail,box:box,nav:nav,R:R,navp:navp};
+    return v.__p;
+  }
+  function go(v,n){
+    var p=build(v);if(!p)return;
+    n=Math.max(0,Math.min(p.groups.length-1,n));cur[v.id]=n;
+    var on=root.classList.contains('con-pasos'),fin=n===p.groups.length-1;
+    p.groups.forEach(function(gr,i){gr.forEach(function(el){el.classList.toggle('pasos-fuera',on&&i!==n);});});
+    p.tail.forEach(function(el){el.classList.toggle('pasos-fuera',on&&!fin);});
+    if(p.navp)p.navp.classList.toggle('pasos-fuera',on);
+    p.box.querySelector('b').textContent=fin?'Terminada':'Parte '+(n+1)+' de '+p.R;
+    p.box.querySelector('span').textContent=p.labels[n];
+    Array.prototype.forEach.call(p.box.querySelectorAll('.pasos-d i'),function(d,i){d.classList.toggle('on',i<=n);});
+    var bk=p.nav.querySelector('[data-d="-1"]'),nx=p.nav.querySelector('[data-d="1"]');
+    bk.hidden=(n===0);nx.hidden=fin;nx.textContent=(n===p.R-1)?'Terminar':'Siguiente';
+    if(on){window.scrollTo(0,0);if(fin){try{p.groups[n][0].focus({preventScroll:true});}catch(e){}}}
+  }
+  function apply(){
+    root.classList.toggle('con-pasos',mq.matches);
+    views().forEach(function(v){
+      if(v.hidden){return;}
+      var p=build(v);if(!p)return;
+      if(!mq.matches){p.groups.forEach(function(gr){gr.forEach(function(el){el.classList.remove('pasos-fuera');});});p.tail.forEach(function(el){el.classList.remove('pasos-fuera');});if(p.navp)p.navp.classList.remove('pasos-fuera');}
+      else go(v,cur[v.id]||0);
+    });
+  }
+  function enter(){views().forEach(function(v){if(!v.hidden){cur[v.id]=0;}});apply();}
+  if(mq.addEventListener)mq.addEventListener('change',apply);else if(mq.addListener)mq.addListener(apply);
+  window.addEventListener('hashchange',function(){setTimeout(enter,0);});
+  enter();
+})();
+</script>
+</body></html>
